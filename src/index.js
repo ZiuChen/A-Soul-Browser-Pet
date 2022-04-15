@@ -18,7 +18,7 @@ class Diana {
       top: y - 75,
       duration: (this.getDistance(x, y) / this.speed) * 1000,
       easing: "linear",
-      update: (anim) => {
+      update: () => {
         this.x = this.getCurrentPosition(this.selector).x;
         this.y = this.getCurrentPosition(this.selector).y;
         if (
@@ -35,11 +35,6 @@ class Diana {
         ) {
           this.changeStatus("unhappy");
         }
-      },
-      complete: (anim) => {
-        // do not use function
-        this.x = x;
-        this.y = y;
       },
     });
   }
@@ -100,21 +95,11 @@ class Candy {
     $(this.selector).remove();
     this.hadEaten = true;
   }
-  checkHadEaten() {
-    if ($(this.selector).length !== 0) {
-      this.hadEaten = false;
-      return false;
-    } else {
-      this.hadEaten = true;
-      return true;
-    }
-  }
 }
 
 function main() {
   let diana = new Diana(".target img");
   let followFlag = 1; // 0 | 1 | 2
-
   switch (followFlag) {
     case 1:
       $(document).click((e) => {
