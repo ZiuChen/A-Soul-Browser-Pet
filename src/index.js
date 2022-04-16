@@ -27,9 +27,9 @@ class ASoul {
     this.status = "thinking"; // thinking | chasing | happy | unhappy
     this.actor = actor; // diana | ava | bella | carol | eileen
     this.generateActor({ x: x, y: y });
-    this.addClickListener();
-    this.x = this.getCurrentPosition(this.selector).x;
-    this.y = this.getCurrentPosition(this.selector).y;
+    this.addEventListener();
+    this.x = this.getPosition(this.selector).x;
+    this.y = this.getPosition(this.selector).y;
   }
   generateActor({ x, y }) {
     let img = document.createElement("img");
@@ -42,7 +42,7 @@ class ASoul {
     $("body").append(img);
     beejdnd.init(); // draggable init
   }
-  addClickListener() {
+  addEventListener() {
     $(this.selector)
       .mousedown((e) => {
         $(this.selector).attr(
@@ -51,6 +51,7 @@ class ASoul {
         );
       })
       .mouseup((e) => {
+        this.updatePosition(this.getPosition(this.selector));
         setTimeout(() => {
           $(this.selector).attr(
             "src",
@@ -72,8 +73,8 @@ class ASoul {
         // console.log(`bait.x: ${bait.x}, this.x: ${this.x}`);
         // console.log(`bait.y: ${bait.y}, this.y: ${this.y}`);
         this.changeStatus("chasing");
-        this.x = this.getCurrentPosition(this.selector).x;
-        this.y = this.getCurrentPosition(this.selector).y;
+        this.x = this.getPosition(this.selector).x;
+        this.y = this.getPosition(this.selector).y;
       },
       complete: () => {
         if (bait.hadEaten === false) {
@@ -99,22 +100,24 @@ class ASoul {
       });
     }
   }
+  updatePosition({ x, y }) {
+    this.x = x;
+    this.y = y;
+  }
   changeStatus(status) {
     $(this.selector).attr("src", `./static/img/${this.actor}/${status}.png`);
   }
-  getCurrentPosition(selector) {
+  getPosition(selector) {
     return {
       x: parseInt($(selector).css("left").split("px")[0] - 50),
       y: parseInt($(selector).css("top").split("px")[0] - 50),
     };
   }
   getDistance(x, y) {
-    console.log(`bait.x: ${x} bait.y: ${y}`);
-    console.log(`this.x: ${this.x} this.y: ${this.y}`);
     let distance = Math.sqrt(
       Math.pow(x - this.x - 100, 2) + Math.pow(y - this.y - 125, 2) // Adaptive vaule adjustment
     );
-    console.log(`distance: ${distance}`);
+
     return distance;
   }
 }
@@ -152,6 +155,18 @@ class Bait {
   }
 }
 
+function documentListenerDebounce(fun, time) {
+  let timeout = null; // debounce
+  $(document).mousemove((e) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      fun(e);
+    }, time);
+  });
+}
+
 function followClick(actor) {
   $(document).mousedown((e) => {
     $(".bait").remove(); // only one candy appear
@@ -165,31 +180,37 @@ function followClick(actor) {
 }
 
 function followArrow(actor) {
-  let timeout = null; // debounce
-  $(document).mousemove((e) => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => {
-      actor.chase({
-        x: e.pageX,
-        y: e.pageY,
-        hadEaten: false,
-        eaten: () => {
-          return;
-        },
-      });
-    }, 10);
-  });
+  documentListenerDebounce((e) => {
+    actor.chase({
+      x: e.pageX,
+      y: e.pageY,
+      hadEaten: false,
+      eaten: () => {
+        return;
+      },
+    });
+  }, 10);
+}
+
+function towardFollowArrow(actor) {
+  documentListenerDebounce((e) => {
+    actor.updateDirection(e.pageX);
+  }, 10);
 }
 
 function main() {
-  let ava = new ASoul({ x: 160, y: 100, speed: 150, actor: "ava" });
-  let bella = new ASoul({ x: 180, y: 200, speed: 200, actor: "bella" });
-  let carol = new ASoul({ x: 220, y: 400, speed: 300, actor: "carol" });
+  let ava = new ASoul({ x: 160, y: 100, speed: 250, actor: "ava" });
+  let bella = new ASoul({ x: 180, y: 200, speed: 250, actor: "bella" });
+  let carol = new ASoul({ x: 220, y: 400, speed: 250, actor: "carol" });
   let diana = new ASoul({ x: 140, y: 0, speed: 250, actor: "diana" });
   let eileen = new ASoul({ x: 200, y: 300, speed: 250, actor: "eileen" });
-  followClick(diana);
+  followClick(eileen);
+
+  towardFollowArrow(ava);
+  towardFollowArrow(bella);
+  towardFollowArrow(carol);
+  towardFollowArrow(diana);
+  towardFollowArrow(eileen);
   // followClick(bella);
 }
 
