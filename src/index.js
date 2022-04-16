@@ -25,25 +25,23 @@ class ASoul {
       duration: (this.getDistance(bait.x, bait.y) / this.speed) * 1000,
       easing: "linear",
       update: () => {
-        console.log(`bait.x: ${bait.x}, this.x: ${this.x}`);
-        console.log(`bait.y: ${bait.y}, this.y: ${this.y}`);
+        // console.log(`bait.x: ${bait.x}, this.x: ${this.x}`);
+        // console.log(`bait.y: ${bait.y}, this.y: ${this.y}`);
         this.x = this.getCurrentPosition(this.selector).x;
         this.y = this.getCurrentPosition(this.selector).y;
-        if (this.x + 100 === bait.x && this.y + 125 === bait.y) {
-          if (bait.hadEaten === false) {
-            console.log("eaten");
-            bait.eaten();
-            this.changeStatus("happy");
-          } else {
-            console.log("uneaten");
-            this.changeStatus("unhappy");
-          }
+      },
+      complete: () => {
+        if (bait.hadEaten === false) {
+          bait.eaten();
+          this.changeStatus("happy");
+        } else {
+          this.changeStatus("unhappy");
         }
       },
     });
   }
   updateDirection(x) {
-    if (x >= this.x) {
+    if (x - 100 >= this.x) {
       // turn right
       anime({
         targets: this.selector,
