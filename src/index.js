@@ -136,6 +136,7 @@ class Bait {
     // TODO: Add animation to candy generation
     let img = document.createElement("img");
     img.src = `./static/img/${this.type}.png`;
+    img.draggable = false;
     img.id = this.id;
     $(img)
       .css({ left: x - 75, top: y - 75 })
@@ -189,13 +190,13 @@ function followArrow(actor) {
         return;
       },
     });
-  }, 10);
+  }, 15);
 }
 
 function towardFollowArrow(actor) {
   documentListenerDebounce((e) => {
     actor.updateDirection(e.pageX);
-  }, 10);
+  }, 15);
 }
 
 function main() {
@@ -205,6 +206,7 @@ function main() {
   let diana = new ASoul({ x: 140, y: 0, speed: 250, actor: "diana" });
   let eileen = new ASoul({ x: 200, y: 300, speed: 250, actor: "eileen" });
   followClick(eileen);
+  // followArrow(eileen);
 
   towardFollowArrow(ava);
   towardFollowArrow(bella);
