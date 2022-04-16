@@ -27,6 +27,7 @@ class ASoul {
     this.status = "thinking"; // thinking | chasing | happy | unhappy
     this.actor = actor; // diana | ava | bella | carol | eileen
     this.generateActor({ x: x, y: y });
+    this.addClickListener();
     this.x = this.getCurrentPosition(this.selector).x;
     this.y = this.getCurrentPosition(this.selector).y;
   }
@@ -39,12 +40,28 @@ class ASoul {
       .addClass(this.actor)
       .addClass("draggable");
     $("body").append(img);
-    beejdnd.init();
+    beejdnd.init(); // draggable init
+  }
+  addClickListener() {
+    $(this.selector)
+      .mousedown((e) => {
+        $(this.selector).attr(
+          "src",
+          `./static/img/${this.actor}/interact_1.png`
+        );
+      })
+      .mouseup((e) => {
+        setTimeout(() => {
+          $(this.selector).attr(
+            "src",
+            `./static/img/${this.actor}/interact_2.png`
+          );
+        }, 500);
+      });
   }
   chase(bait) {
     anime.remove(this.selector); // only chase the lastest candy
     this.updateDirection(bait.x);
-    this.changeStatus("chasing");
     anime({
       targets: this.selector,
       left: bait.x - 50,
@@ -54,6 +71,7 @@ class ASoul {
       update: () => {
         // console.log(`bait.x: ${bait.x}, this.x: ${this.x}`);
         // console.log(`bait.y: ${bait.y}, this.y: ${this.y}`);
+        this.changeStatus("chasing");
         this.x = this.getCurrentPosition(this.selector).x;
         this.y = this.getCurrentPosition(this.selector).y;
       },
