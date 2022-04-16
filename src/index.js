@@ -1,3 +1,25 @@
+const TABLE = {
+  ava: {
+    bait: "bowl",
+    speed: 250,
+  },
+  bella: {
+    bait: "star",
+    speed: 250,
+  },
+  caro: {
+    bait: "knight",
+    speed: 250,
+  },
+  diana: {
+    bait: "candy",
+    speed: 250,
+  },
+  eileen: {
+    bait: "icecream",
+    speed: 250,
+  },
+};
 class ASoul {
   constructor({ x, y, speed, actor }) {
     this.selector = `.${actor}`;
@@ -10,9 +32,14 @@ class ASoul {
   }
   generateActor({ x, y }) {
     let img = document.createElement("img");
-    img.src = `./static/${this.actor}/thinking.png`;
-    $(img).css({ left: x, top: y }).addClass("actor").addClass(this.actor);
+    img.src = `./static/img/${this.actor}/thinking.png`;
+    $(img)
+      .css({ left: x, top: y })
+      .addClass("actor")
+      .addClass(this.actor)
+      .addClass("draggable");
     $("body").append(img);
+    beejdnd.init();
   }
   chase(bait) {
     anime.remove(this.selector); // only chase the lastest candy
@@ -55,7 +82,7 @@ class ASoul {
     }
   }
   changeStatus(status) {
-    $(this.selector).attr("src", `./static/${this.actor}/${status}.png`);
+    $(this.selector).attr("src", `./static/img/${this.actor}/${status}.png`);
   }
   getCurrentPosition(selector) {
     return {
@@ -87,7 +114,7 @@ class Bait {
   generateBait(x, y) {
     // TODO: Add animation to candy generation
     let img = document.createElement("img");
-    img.src = `./static/${this.type}.png`;
+    img.src = `./static/img/${this.type}.png`;
     img.id = this.id;
     $(img)
       .css({ left: x - 75, top: y - 75 })
@@ -107,49 +134,45 @@ class Bait {
   }
 }
 
+function followClick(actor) {
+  $(document).mousedown((e) => {
+    $(".bait").remove(); // only one candy appear
+    Object.keys(TABLE).forEach((key) => {
+      if (actor.actor === key) {
+        let bait = new Bait({ x: e.pageX, y: e.pageY, type: TABLE[key].bait });
+        actor.chase(bait);
+      }
+    });
+  });
+}
+
+function followArrow(actor) {
+  let timeout = null; // debounce
+  $(document).mousemove((e) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      actor.chase({
+        x: e.pageX,
+        y: e.pageY,
+        hadEaten: false,
+        eaten: () => {
+          return;
+        },
+      });
+    }, 10);
+  });
+}
+
 function main() {
-  let diana = new ASoul({ x: 140, y: 0, speed: 250, actor: "diana" });
   let ava = new ASoul({ x: 160, y: 100, speed: 150, actor: "ava" });
   let bella = new ASoul({ x: 180, y: 200, speed: 200, actor: "bella" });
-  let eileen = new ASoul({ x: 200, y: 300, speed: 250, actor: "eileen" });
   let carol = new ASoul({ x: 220, y: 400, speed: 300, actor: "carol" });
-  let followFlag = 1; // 0 | 1 | 2
-  switch (followFlag) {
-    case 1:
-      $(document).click((e) => {
-        $(".bait").remove(); // only one candy appear
-        let candy = new Bait({ x: e.pageX, y: e.pageY, type: "candy" });
-        diana.chase(candy);
-        // let bowl = new Bait({ x: e.pageX, y: e.pageY, type: "bowl" });
-        // ava.chase(bowl);
-        // let star = new Bait({ x: e.pageX, y: e.pageY, type: "star" });
-        // bella.chase(star);
-        // let icecream = new Bait({ x: e.pageX, y: e.pageY, type: "icecream" });
-        // eileen.chase(icecream);
-        // let knight = new Bait({ x: e.pageX, y: e.pageY, type: "knight" });
-        // carol.chase(knight);
-      });
-      return;
-
-    case 2:
-      let timeout = null; // debounce
-      $(document).mousemove((e) => {
-        if (timeout) {
-          clearTimeout(timeout);
-        }
-        timeout = setTimeout(() => {
-          diana.chase({
-            x: e.pageX,
-            y: e.pageY,
-            hadEaten: false,
-            eaten: () => {
-              return;
-            },
-          });
-        }, 10);
-      });
-      return;
-  }
+  let diana = new ASoul({ x: 140, y: 0, speed: 250, actor: "diana" });
+  let eileen = new ASoul({ x: 200, y: 300, speed: 250, actor: "eileen" });
+  followClick(diana);
+  // followClick(bella);
 }
 
 main();
