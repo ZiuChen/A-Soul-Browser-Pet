@@ -1,39 +1,43 @@
-class Diana {
-  constructor(selector) {
-    this.selector = selector;
-    this.speed = 250; // px per second
-    this.status = "unhappy"; // thinking | chasing | happy | unhappy
-    this.x = this.getCurrentPosition(selector).x;
-    this.y = this.getCurrentPosition(selector).y;
+class ASoul {
+  constructor({ x, y, speed, actor }) {
+    this.selector = `.${actor}`;
+    this.speed = speed; // px per second
+    this.status = "thinking"; // thinking | chasing | happy | unhappy
+    this.actor = actor; // diana | ava | bella | carol | eileen
+    this.generateActor({ x: x, y: y });
+    this.x = this.getCurrentPosition(this.selector).x;
+    this.y = this.getCurrentPosition(this.selector).y;
   }
-  chase(candy) {
-    let x = candy.x;
-    let y = candy.y;
+  generateActor({ x, y }) {
+    let img = document.createElement("img");
+    img.src = `./static/${this.actor}/thinking.png`;
+    $(img).css({ left: x, top: y }).addClass("actor").addClass(this.actor);
+    $("body").append(img);
+  }
+  chase(bait) {
     anime.remove(this.selector); // only chase the lastest candy
-    this.updateDirection(x);
+    this.updateDirection(bait.x);
     this.changeStatus("chasing");
     anime({
       targets: this.selector,
-      left: x - 50,
-      top: y - 75,
-      duration: (this.getDistance(x, y) / this.speed) * 1000,
+      left: bait.x - 50,
+      top: bait.y - 75,
+      duration: (this.getDistance(bait.x, bait.y) / this.speed) * 1000,
       easing: "linear",
       update: () => {
+        console.log(`bait.x: ${bait.x}, this.x: ${this.x}`);
+        console.log(`bait.y: ${bait.y}, this.y: ${this.y}`);
         this.x = this.getCurrentPosition(this.selector).x;
         this.y = this.getCurrentPosition(this.selector).y;
-        if (
-          this.x + 100 === candy.x &&
-          this.y + 125 === candy.y &&
-          candy.hadEaten === false
-        ) {
-          candy.eaten();
-          this.changeStatus("happy");
-        } else if (
-          this.x + 100 === candy.x &&
-          this.y + 125 === candy.y &&
-          candy.hadEaten === true
-        ) {
-          this.changeStatus("unhappy");
+        if (this.x + 100 === bait.x && this.y + 125 === bait.y) {
+          if (bait.hadEaten === false) {
+            console.log("eaten");
+            bait.eaten();
+            this.changeStatus("happy");
+          } else {
+            console.log("uneaten");
+            this.changeStatus("unhappy");
+          }
         }
       },
     });
@@ -53,7 +57,7 @@ class Diana {
     }
   }
   changeStatus(status) {
-    $(this.selector).attr("src", `./static/${status}.png`);
+    $(this.selector).attr("src", `./static/${this.actor}/${status}.png`);
   }
   getCurrentPosition(selector) {
     return {
@@ -65,23 +69,25 @@ class Diana {
     return Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2));
   }
 }
-class Candy {
-  constructor(x, y) {
+class Bait {
+  constructor({ x, y, type }) {
     this.id = new Date().getTime().toString();
     this.selector = "#" + this.id;
     this.fadeTime = 5000;
     this.x = x;
     this.y = y;
+    this.type = type;
     this.hadEaten = false;
-    this.generateCandy(x, y);
+    this.generateBait(x, y);
   }
-  generateCandy(x, y) {
+  generateBait(x, y) {
+    // TODO: Add animation to candy generation
     let img = document.createElement("img");
-    img.src = "./static/candy.png";
+    img.src = `./static/${this.type}.png`;
     img.id = this.id;
     $(img)
-      .css({ left: x - 80, top: y - 50 })
-      .addClass("candy");
+      .css({ left: x - 75, top: y - 75 })
+      .addClass("bait");
     $("body").append(img);
     this.addFadeListener();
   }
@@ -98,14 +104,26 @@ class Candy {
 }
 
 function main() {
-  let diana = new Diana(".target img");
+  let diana = new ASoul({ x: 140, y: 0, speed: 250, actor: "diana" });
+  let ava = new ASoul({ x: 160, y: 100, speed: 150, actor: "ava" });
+  let bella = new ASoul({ x: 180, y: 200, speed: 200, actor: "bella" });
+  let eileen = new ASoul({ x: 200, y: 300, speed: 250, actor: "eileen" });
+  let carol = new ASoul({ x: 220, y: 400, speed: 300, actor: "carol" });
   let followFlag = 1; // 0 | 1 | 2
   switch (followFlag) {
     case 1:
       $(document).click((e) => {
-        $(".candy").remove(); // only one candy appear
-        let candy = new Candy(e.pageX, e.pageY);
+        $(".bait").remove(); // only one candy appear
+        let candy = new Bait({ x: e.pageX, y: e.pageY, type: "candy" });
         diana.chase(candy);
+        // let bowl = new Bait({ x: e.pageX, y: e.pageY, type: "bowl" });
+        // ava.chase(bowl);
+        // let star = new Bait({ x: e.pageX, y: e.pageY, type: "star" });
+        // bella.chase(star);
+        // let icecream = new Bait({ x: e.pageX, y: e.pageY, type: "icecream" });
+        // eileen.chase(icecream);
+        // let knight = new Bait({ x: e.pageX, y: e.pageY, type: "knight" });
+        // carol.chase(knight);
       });
       return;
 

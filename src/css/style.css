@@ -1,11 +1,11 @@
-.target img {
+.actor {
     position: absolute;
     height: 100px;
     width: 100px;
     z-index: 99999;
 }
 
-.candy {
+.bait {
     position: absolute;
     transform: scale(0.25);
     z-index: 999999;
