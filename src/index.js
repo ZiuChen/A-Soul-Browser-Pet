@@ -64,7 +64,13 @@ class ASoul {
     };
   }
   getDistance(x, y) {
-    return Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2));
+    console.log(`bait.x: ${x} bait.y: ${y}`);
+    console.log(`this.x: ${this.x} this.y: ${this.y}`);
+    let distance = Math.sqrt(
+      Math.pow(x - this.x - 100, 2) + Math.pow(y - this.y - 125, 2) // Adaptive vaule adjustment
+    );
+    console.log(`distance: ${distance}`);
+    return distance;
   }
 }
 class Bait {
