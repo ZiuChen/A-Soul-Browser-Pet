@@ -50,10 +50,13 @@ class ASoul {
       })
       .mouseup((e) => {
         this.updatePosition(this.getPosition(this.selector));
+        let min = 2;
+        let max = 5;
+        let rand = parseInt(Math.random() * (max - min + 1) + min, 10);
         setTimeout(() => {
           $(this.selector).attr(
             "src",
-            getImgURL(`./static/img/${this.actor}/interact_2.png`)
+            getImgURL(`./static/img/${this.actor}/interact_${rand}.png`)
           );
         }, 500);
       });
@@ -224,8 +227,8 @@ function main() {
       if (actorConfig.enabled) {
         // enabled
         let actor = new ASoul({
-          x: 200,
-          y: 200,
+          x: 250,
+          y: 250,
           speed: config.speed,
           actor: actorName,
         });
