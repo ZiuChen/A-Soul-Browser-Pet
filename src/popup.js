@@ -1,94 +1,76 @@
-const App = {
-  data() {
-    return {
-      keys: {
-        followMouse: {
-          id: "followMouse",
-          name: "跟随鼠标",
-        },
-        followClick: {
-          id: "followClick",
-          name: "跟随点击",
-        },
-        dontFollow: {
-          id: "dontFollow",
-          name: "不跟随",
-        },
-      },
-      actors: [
-        {
-          name_EN: "ava",
-          name_ZH: "向晚",
-          enable: true,
-          followMouse: true,
-          followClick: false,
-          dontFollow: false,
-        },
-        {
-          name_EN: "bella",
-          name_ZH: "贝拉",
-          enable: true,
-          followMouse: true,
-          followClick: false,
-          dontFollow: false,
-        },
-        {
-          name_EN: "carol",
-          name_ZH: "珈乐",
-          enable: true,
-          followMouse: true,
-          followClick: false,
-          dontFollow: false,
-        },
-        {
-          name_EN: "diana",
-          name_ZH: "嘉然",
-          enable: true,
-          followMouse: true,
-          followClick: false,
-          dontFollow: false,
-        },
-        {
-          name_EN: "eileen",
-          name_ZH: "乃琳",
-          enable: true,
-          followMouse: true,
-          followClick: false,
-          dontFollow: false,
-        },
-      ],
-    };
-  },
-  methods: {
-    handleChange: function (e) {
-      // Update Config
-      let target = e.target;
-      this.actors.forEach((actor) => {
-        if (actor.name_EN === target.name) {
-          Object.keys(this.keys).forEach((key) => {
-            actor[key] = false;
-          });
-          actor[target.className] = target.checked;
+const NAMETABLE = ["ava", "bella", "carol", "diana", "eileen"];
+const OPTIONSTABLE = ["followMouse", "followClick", "dontFollow"];
+
+async function listenTableChange() {
+  NAMETABLE.forEach((name) => {
+    $(`.${name}`).change(async (e) => {
+      let actorName = e.currentTarget.classList[1]; // actor name
+      let optionName = e.target.className; // changed option
+      let optionStatus = e.target.checked;
+      await loadConfig()
+        .then((config) => {
+          if (optionName === "enabled") {
+            // enabled status changed
+            config.actors[actorName].enabled = optionStatus;
+          } else {
+            // options changed
+            OPTIONSTABLE.forEach((item) => {
+              // turn all status to false firstly
+              config.actors[actorName].options[item] = false;
+            });
+            config.actors[actorName].options[optionName] = optionStatus;
+          }
+          return config;
+        })
+        .then((newConfig) => {
+          updateConfig(newConfig);
+        });
+      // additional effect
+      if (optionName === "enabled") {
+        let detailContainer = $(`.${actorName} .detail-custom-container`);
+        if (!optionStatus) {
+          // enabled
+          detailContainer.hide();
+        } else {
+          detailContainer.show();
         }
+      }
+    });
+  });
+}
+
+async function loadConfig() {
+  // Already initialized in background.js
+  return await chrome.storage.sync.get("CONFIG").then((data) => {
+    return JSON.parse(data["CONFIG"]);
+  });
+}
+
+async function updateConfig(config) {
+  return await chrome.storage.sync.set({ CONFIG: JSON.stringify(config) });
+}
+
+async function initTable() {
+  await loadConfig().then((config) => {
+    NAMETABLE.forEach((actorName) => {
+      // init enabled status
+      let enableStatus = config.actors[actorName].enabled;
+      $(`.${actorName} .enabled`).get(0).checked = enableStatus;
+      // init options status
+      OPTIONSTABLE.forEach((optionName) => {
+        let optionStatus = config.actors[actorName].options[optionName];
+        $(`.${actorName} .${optionName}`).get(0).checked = optionStatus;
       });
-    },
-  },
-  created: function () {
-    console.log("MOUNTED");
-    console.log(chrome.runtime);
-    // chrome.runtime.sendMessage({ val1, val2 }, (response) => {
-    //   console.log(response);
-    // });
-    // chrome.storage.sync.get("CONFIG", function (data) {
-    //   console.log(data);
-    // });
-  },
-};
+      // hide options when disabled
+      if (enableStatus) {
+        // enabled
+        $(`.${actorName} .detail-custom-container`).show();
+      } else {
+        $(`.${actorName} .detail-custom-container`).hide();
+      }
+    });
+  });
+}
 
-Vue.createApp(App).mount("#app-setting");
-
-window.addEventListener("message", function (event) {
-  console.log(event);
-  event.source.postMessage({ result: "asdasdasd" }, event.origin);
-  console.info("message received in sandbox: " + event.data.message);
-});
+initTable();
+listenTableChange();

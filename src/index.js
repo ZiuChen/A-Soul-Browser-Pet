@@ -1,3 +1,5 @@
+const NAMETABLE = ["ava", "bella", "carol", "diana", "eileen"];
+const OPTIONSTABLE = ["followMouse", "followClick", "dontFollow"];
 const TABLE = {
   ava: {
     bait: "bowl",
@@ -25,6 +27,7 @@ class ASoul {
     this.addEventListener();
     this.x = this.getPosition(this.selector).x;
     this.y = this.getPosition(this.selector).y;
+    towardFollowMouse(this);
   }
   generateActor({ x, y }) {
     let img = document.createElement("img");
@@ -65,8 +68,6 @@ class ASoul {
       duration: (this.getDistance(bait.x, bait.y) / this.speed) * 1000,
       easing: "linear",
       update: () => {
-        // console.log(`bait.x: ${bait.x}, this.x: ${this.x}`);
-        // console.log(`bait.y: ${bait.y}, this.y: ${this.y}`);
         this.changeStatus("chasing");
         this.x = this.getPosition(this.selector).x;
         this.y = this.getPosition(this.selector).y;
@@ -154,6 +155,20 @@ class Bait {
   }
 }
 
+function getImgURL(src) {
+  if (chrome.runtime.getURL !== undefined) {
+    return chrome.runtime.getURL(src);
+  } else {
+    return src;
+  }
+}
+
+function readConfig(calllBack) {
+  chrome.storage.sync.get("CONFIG", function (data) {
+    calllBack(JSON.parse(data["CONFIG"]));
+  });
+}
+
 function documentListenerDebounce(fun, time) {
   let timeout = null; // debounce
   $(document).mousemove((e) => {
@@ -197,53 +212,27 @@ function towardFollowMouse(actor) {
   }, 15);
 }
 
-function getImgURL(src) {
-  if (chrome.runtime.getURL !== undefined) {
-    return chrome.runtime.getURL(src);
-  } else {
-    return src;
-  }
-}
-
-function readConfig(calllBack) {
-  chrome.storage.sync.get("CONFIG", function (data) {
-    calllBack(JSON.parse(data["CONFIG"]));
-  });
-}
-
 function main() {
   readConfig((config) => {
-    config.actors.forEach((actor) => {
-      if (actor.enable) {
-        new ASoul({
-          x: 160,
-          y: 100,
+    NAMETABLE.forEach((actorName) => {
+      let actorConfig = config.actors[actorName];
+      if (actorConfig.enabled) {
+        // enabled
+        let actor = new ASoul({
+          x: 200,
+          y: 200,
           speed: config.speed,
-          actor: actor.name_EN,
+          actor: actorName,
         });
+        if (actorConfig.options.followClick) {
+          followClick(actor);
+        }
+        if (actorConfig.options.followMouse) {
+          followMouse(actor);
+        }
       }
     });
   });
-  // let ava = new ASoul({ x: 160, y: 100, speed: 250, actor: "ava" });
-  // let bella = new ASoul({ x: 180, y: 200, speed: 250, actor: "bella" });
-  // let carol = new ASoul({ x: 220, y: 400, speed: 250, actor: "carol" });
-  // let diana = new ASoul({ x: 140, y: 0, speed: 250, actor: "diana" });
-  // let eileen = new ASoul({ x: 200, y: 300, speed: 250, actor: "eileen" });
-  // followClick(eileen);
-  // followMouse(eileen);
-
-  // towardFollowMouse(ava);
-  // towardFollowMouse(bella);
-  // towardFollowMouse(carol);
-  // towardFollowMouse(diana);
-  // towardFollowMouse(eileen);
-  // followClick(bella);
 }
-
-sandboxWin = window.open("index.html", "SANDBOXED!", "height=800,width=500");
-
-// fire a postMessage event to the sandbox. Inspect the sandbox and see the
-// message in the console.
-sandboxWin.postMessage({ message: "It works!!" }, "*");
 
 main();
