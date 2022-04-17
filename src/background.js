@@ -54,5 +54,8 @@ chrome.storage.sync.get("CONFIG").then((data) => {
   }
 });
 chrome.storage.onChanged.addListener(function (changes, namespace) {
+  chrome.storage.sync.get("CONFIG", (data) => {
+    console.log(data["CONFIG"]);
+  });
   console.log("[background.js] storage changed");
 });

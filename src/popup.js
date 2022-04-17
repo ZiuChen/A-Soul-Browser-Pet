@@ -37,6 +37,28 @@ async function listenTableChange() {
       }
     });
   });
+  $(".speed").change(async (e) => {
+    // speed config changed
+    await loadConfig()
+      .then((config) => {
+        config.speed = e.target.value; // DIFFERENCE POINT
+        return config;
+      })
+      .then((newConfig) => {
+        updateConfig(newConfig);
+      });
+  });
+  $(".generateBait").change(async (e) => {
+    // generateBait config changed
+    await loadConfig()
+      .then((config) => {
+        config.generateBait = e.target.checked; // DIFFERENCE POINT
+        return config;
+      })
+      .then((newConfig) => {
+        updateConfig(newConfig);
+      });
+  });
 }
 
 async function loadConfig() {
@@ -69,6 +91,8 @@ async function initTable() {
         $(`.${actorName} .detail-custom-container`).hide();
       }
     });
+    $(".speed").get(0).value = config.speed;
+    $(".generateBait").get(0).checked = config.generateBait;
   });
 }
 

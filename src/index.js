@@ -7,7 +7,7 @@ const TABLE = {
   bella: {
     bait: "star",
   },
-  caro: {
+  carol: {
     bait: "knight",
   },
   diana: {
@@ -137,6 +137,11 @@ class Bait {
     img.src = getImgURL(`./static/img/${this.type}.png`);
     img.draggable = false;
     img.id = this.id;
+    readConfig((config) => {
+      if (config.generateBait) {
+        $(img).css({ display: "" });
+      }
+    });
     $(img)
       .css({ left: x - 75, top: y - 75, display: "none" })
       .addClass("bait");

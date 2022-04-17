@@ -1,4 +1,9 @@
-.mdui-container {
+.actor-configs {
+    display: flex;
+    flex-direction: row;
+}
+
+.common-configs {
     display: flex;
     flex-direction: row;
 }
