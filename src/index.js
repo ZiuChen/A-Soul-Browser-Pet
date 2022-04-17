@@ -1,23 +1,18 @@
 const TABLE = {
   ava: {
     bait: "bowl",
-    speed: 250,
   },
   bella: {
     bait: "star",
-    speed: 250,
   },
   caro: {
     bait: "knight",
-    speed: 250,
   },
   diana: {
     bait: "candy",
-    speed: 250,
   },
   eileen: {
     bait: "icecream",
-    speed: 250,
   },
 };
 class ASoul {
@@ -33,7 +28,7 @@ class ASoul {
   }
   generateActor({ x, y }) {
     let img = document.createElement("img");
-    img.src = `./static/img/${this.actor}/thinking.png`;
+    img.src = getImgURL(`./static/img/${this.actor}/thinking.png`);
     $(img)
       .css({ left: x, top: y })
       .addClass("actor")
@@ -47,7 +42,7 @@ class ASoul {
       .mousedown((e) => {
         $(this.selector).attr(
           "src",
-          `./static/img/${this.actor}/interact_1.png`
+          getImgURL(`./static/img/${this.actor}/interact_1.png`)
         );
       })
       .mouseup((e) => {
@@ -55,7 +50,7 @@ class ASoul {
         setTimeout(() => {
           $(this.selector).attr(
             "src",
-            `./static/img/${this.actor}/interact_2.png`
+            getImgURL(`./static/img/${this.actor}/interact_2.png`)
           );
         }, 500);
       });
@@ -105,7 +100,10 @@ class ASoul {
     this.y = y;
   }
   changeStatus(status) {
-    $(this.selector).attr("src", `./static/img/${this.actor}/${status}.png`);
+    $(this.selector).attr(
+      "src",
+      getImgURL(`./static/img/${this.actor}/${status}.png`)
+    );
   }
   getPosition(selector) {
     return {
@@ -135,11 +133,11 @@ class Bait {
   generateBait(x, y) {
     // TODO: Add animation to candy generation
     let img = document.createElement("img");
-    img.src = `./static/img/${this.type}.png`;
+    img.src = getImgURL(`./static/img/${this.type}.png`);
     img.draggable = false;
     img.id = this.id;
     $(img)
-      .css({ left: x - 75, top: y - 75 })
+      .css({ left: x - 75, top: y - 75, display: "none" })
       .addClass("bait");
     $("body").append(img);
     this.addFadeListener();
@@ -180,7 +178,7 @@ function followClick(actor) {
   });
 }
 
-function followArrow(actor) {
+function followMouse(actor) {
   documentListenerDebounce((e) => {
     actor.chase({
       x: e.pageX,
@@ -193,27 +191,59 @@ function followArrow(actor) {
   }, 15);
 }
 
-function towardFollowArrow(actor) {
+function towardFollowMouse(actor) {
   documentListenerDebounce((e) => {
     actor.updateDirection(e.pageX);
   }, 15);
 }
 
-function main() {
-  let ava = new ASoul({ x: 160, y: 100, speed: 250, actor: "ava" });
-  let bella = new ASoul({ x: 180, y: 200, speed: 250, actor: "bella" });
-  let carol = new ASoul({ x: 220, y: 400, speed: 250, actor: "carol" });
-  let diana = new ASoul({ x: 140, y: 0, speed: 250, actor: "diana" });
-  let eileen = new ASoul({ x: 200, y: 300, speed: 250, actor: "eileen" });
-  followClick(eileen);
-  // followArrow(eileen);
+function getImgURL(src) {
+  if (chrome.runtime.getURL !== undefined) {
+    return chrome.runtime.getURL(src);
+  } else {
+    return src;
+  }
+}
 
-  towardFollowArrow(ava);
-  towardFollowArrow(bella);
-  towardFollowArrow(carol);
-  towardFollowArrow(diana);
-  towardFollowArrow(eileen);
+function readConfig(calllBack) {
+  chrome.storage.sync.get("CONFIG", function (data) {
+    calllBack(JSON.parse(data["CONFIG"]));
+  });
+}
+
+function main() {
+  readConfig((config) => {
+    config.actors.forEach((actor) => {
+      if (actor.enable) {
+        new ASoul({
+          x: 160,
+          y: 100,
+          speed: config.speed,
+          actor: actor.name_EN,
+        });
+      }
+    });
+  });
+  // let ava = new ASoul({ x: 160, y: 100, speed: 250, actor: "ava" });
+  // let bella = new ASoul({ x: 180, y: 200, speed: 250, actor: "bella" });
+  // let carol = new ASoul({ x: 220, y: 400, speed: 250, actor: "carol" });
+  // let diana = new ASoul({ x: 140, y: 0, speed: 250, actor: "diana" });
+  // let eileen = new ASoul({ x: 200, y: 300, speed: 250, actor: "eileen" });
+  // followClick(eileen);
+  // followMouse(eileen);
+
+  // towardFollowMouse(ava);
+  // towardFollowMouse(bella);
+  // towardFollowMouse(carol);
+  // towardFollowMouse(diana);
+  // towardFollowMouse(eileen);
   // followClick(bella);
 }
+
+sandboxWin = window.open("index.html", "SANDBOXED!", "height=800,width=500");
+
+// fire a postMessage event to the sandbox. Inspect the sandbox and see the
+// message in the console.
+sandboxWin.postMessage({ message: "It works!!" }, "*");
 
 main();

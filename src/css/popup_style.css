@@ -1,0 +1,24 @@
+body {
+    height: 500px;
+}
+
+.mdui-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.mdui-card {
+    width: 200px;
+    height: 100%;
+    margin: 10px 5px 5px 10px;
+}
+
+.mdui-card-actions .total-switch-container {
+    display: flex;
+    justify-content: center;
+}
+
+.mdui-card-actions .detail-custom-container {
+    display: flex;
+    flex-direction: column;
+}

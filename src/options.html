@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/popup_style.css" />
+    <link rel="stylesheet" href="./lib/mdui.min.css" />
+    <title>Setting</title>
+  </head>
+  <body>
+    <div class="mdui-container" id="app-setting">
+      <div class="mdui-card" v-for="actor of actors">
+        <div class="mdui-card-media">
+          <img :src=`./static/img/${actor.name_EN}/chasing.png` alt="" />
+          <div class="mdui-card-media-covered mdui-card-media-covered-gradient">
+            <div class="mdui-card-primary">
+              <div class="mdui-card-primary-title">{{actor.name_ZH}}</div>
+              <div class="mdui-card-primary-subtitle">{{actor.name_EN}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="mdui-card-actions">
+          <div class="total-switch-container">
+            <label class="mdui-switch">
+              <input type="checkbox" v-model="actor.enable" />
+              <i class="mdui-switch-icon"></i>
+            </label>
+          </div>
+          <div
+            class="detail-custom-container"
+            v-if="actor.enable"
+            @change="handleChange"
+          >
+            <label class="mdui-radio" v-for="key of keys">
+              <input
+                type="radio"
+                :class="key.id"
+                :name="actor.name_EN"
+                :value="actor[key.id]"
+                :checked="actor[key.id]"
+                v-model="actor[key.id]"
+              />
+              <i class="mdui-radio-icon"></i>
+              {{key.name}}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./lib/vue.global.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
