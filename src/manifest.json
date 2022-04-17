@@ -1,7 +1,7 @@
 {
-  "name": "A-Soul Browser Pet",
+  "name": "A-Soul 浏览器宠物 (A-Soul Browser Pet)",
   "version": "0.1",
-  "description": "Raise an A-Soul member as a browser pet.",
+  "description": "在浏览器里养一只A-Soul成员当宠物。",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"

@@ -3,7 +3,7 @@ const DEFAULTCONFIG = {
   generateBait: false,
   actors: {
     ava: {
-      enabled: true,
+      enabled: false,
       options: {
         followMouse: true,
         followClick: false,
@@ -11,7 +11,7 @@ const DEFAULTCONFIG = {
       },
     },
     bella: {
-      enabled: true,
+      enabled: false,
       options: {
         followMouse: true,
         followClick: false,
@@ -19,7 +19,7 @@ const DEFAULTCONFIG = {
       },
     },
     carol: {
-      enabled: true,
+      enabled: false,
       options: {
         followMouse: true,
         followClick: false,
@@ -35,7 +35,7 @@ const DEFAULTCONFIG = {
       },
     },
     eileen: {
-      enabled: true,
+      enabled: false,
       options: {
         followMouse: true,
         followClick: false,
