@@ -288,6 +288,7 @@ function towardFollowMouse(actor) {
   }, 15);
 }
 
+/* main */
 function main() {
   readConfig((config) => {
     NAMETABLE.forEach((actorName) => {
