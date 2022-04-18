@@ -59,6 +59,17 @@ async function listenTableChange() {
         updateConfig(newConfig);
       });
   });
+  $(".positionValue").change(async (e) => {
+    // positionValue config changed
+    await loadConfig()
+      .then((config) => {
+        config.positionValue = e.target.value; // DIFFERENCE POINT
+        return config;
+      })
+      .then((newConfig) => {
+        updateConfig(newConfig);
+      });
+  });
 }
 
 async function loadConfig() {
@@ -93,6 +104,7 @@ async function initTable() {
     });
     $(".speed").get(0).value = config.speed;
     $(".generateBait").get(0).checked = config.generateBait;
+    $(".positionValue").get(0).value = config.positionValue;
   });
 }
 

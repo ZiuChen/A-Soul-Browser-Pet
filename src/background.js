@@ -1,45 +1,46 @@
 const DEFAULTCONFIG = {
   speed: 250,
   generateBait: false,
+  positionValue: "fixed",
   actors: {
     ava: {
       enabled: false,
       options: {
-        followMouse: true,
+        followMouse: false,
         followClick: false,
-        dontFollow: false,
+        dontFollow: true,
       },
     },
     bella: {
       enabled: false,
       options: {
-        followMouse: true,
+        followMouse: false,
         followClick: false,
-        dontFollow: false,
+        dontFollow: true,
       },
     },
     carol: {
       enabled: false,
       options: {
-        followMouse: true,
+        followMouse: false,
         followClick: false,
-        dontFollow: false,
+        dontFollow: true,
       },
     },
     diana: {
       enabled: true,
       options: {
-        followMouse: true,
-        followClick: false,
+        followMouse: false,
+        followClick: true,
         dontFollow: false,
       },
     },
     eileen: {
       enabled: false,
       options: {
-        followMouse: true,
+        followMouse: false,
         followClick: false,
-        dontFollow: false,
+        dontFollow: true,
       },
     },
   },
