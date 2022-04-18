@@ -1,3 +1,4 @@
+/* TABLES */
 const NAMETABLE = ["ava", "bella", "carol", "diana", "eileen"];
 const OPTIONSTABLE = [
   "followMouse",
@@ -22,6 +23,8 @@ const TABLE = {
     bait: "icecream",
   },
 };
+
+/* class definition */
 class ASoul {
   constructor({ x, y, speed, actor }) {
     this.selector = `.actor.${actor}`;
@@ -37,6 +40,7 @@ class ASoul {
   generateActor({ x, y }) {
     let img = document.createElement("img");
     img.src = getImgURL(`./static/img/${this.actor}/thinking.png`);
+    img.alt = this.actor;
     img.draggable = false; // prevent native draggable event
     $(img)
       .css({ left: x, top: y })
@@ -47,13 +51,11 @@ class ASoul {
     beejdnd.init(); // draggable init
   }
   addEventListener() {
+    // click on actor trigger events
     $(this.selector)
       .mousedown((e) => {
         this.removeMessage();
-        $(this.selector).attr(
-          "src",
-          getImgURL(`./static/img/${this.actor}/interact_1.png`)
-        );
+        this.changeStatus("interact_1");
       })
       .mouseup((e) => {
         this.updatePosition(this.getPosition(this.selector));
@@ -62,10 +64,7 @@ class ASoul {
         let rand = parseInt(Math.random() * (max - min + 1) + min, 10);
         this.sendMessage();
         setTimeout(() => {
-          $(this.selector).attr(
-            "src",
-            getImgURL(`./static/img/${this.actor}/interact_${rand}.png`)
-          );
+          this.changeStatus("interact_" + rand);
         }, 500);
         setTimeout(() => {
           this.removeMessage();
@@ -83,6 +82,7 @@ class ASoul {
       duration: (this.getDistance(bait.x, bait.y) / this.speed) * 1000,
       easing: "linear",
       update: () => {
+        // call frequently when chasing
         this.changeStatus("chasing");
         this.x = this.getPosition(this.selector).x;
         this.y = this.getPosition(this.selector).y;
@@ -163,6 +163,7 @@ class ASoul {
       });
   }
 }
+
 class Bait {
   constructor({ x, y, type }) {
     this.id = new Date().getTime().toString();
@@ -203,6 +204,7 @@ class Bait {
   }
 }
 
+/* Chrome API applied */
 function getImgURL(src) {
   if (chrome.runtime.getURL !== undefined) {
     return chrome.runtime.getURL(src);
@@ -217,6 +219,7 @@ function readConfig(calllBack) {
   });
 }
 
+/* common functions */
 function randInt(min, max) {
   return parseInt(Math.random() * (max - min + 1) + min, 10);
 }
@@ -233,6 +236,7 @@ function documentListenerDebounce(fun, time) {
   });
 }
 
+/* action effect */
 function followClick(actor) {
   $(document).mousedown((e) => {
     $(".bait").remove(); // only one candy appear
