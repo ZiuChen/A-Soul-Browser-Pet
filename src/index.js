@@ -49,12 +49,24 @@ class ASoul {
       .addClass("draggable");
     $("body").append(img);
     beejdnd.init(); // draggable init
+    $(".actor.diana").on("dragover", (ev) => {
+      // NECESSARY
+      ev.originalEvent.preventDefault(); // prevent default behavior
+    });
+    $(".actor.diana").on("drop", (ev) => {
+      let data = ev.originalEvent.dataTransfer.getData("text/uri-list");
+      let content = data;
+      if (!data) {
+        content = ev.originalEvent.dataTransfer.getData("text/plain");
+      }
+      this.sendMessage("收到！");
+      console.log(content);
+    });
   }
   addEventListener() {
     // click on actor trigger events
     $(this.selector)
       .mousedown((e) => {
-        this.removeMessage();
         this.changeStatus("interact_1");
       })
       .mouseup((e) => {
@@ -66,9 +78,6 @@ class ASoul {
         setTimeout(() => {
           this.changeStatus("interact_" + rand);
         }, 500);
-        setTimeout(() => {
-          this.removeMessage();
-        }, 1000);
       });
   }
   chase(bait) {
@@ -148,6 +157,9 @@ class ASoul {
         .addClass(`message-box ${this.actor}`)
         .append(`<p>${message}</p>`);
       $("body").append(div);
+      setTimeout(() => {
+        this.removeMessage(); // auto remove after append
+      }, 1000);
     });
   }
   async removeMessage() {
@@ -316,3 +328,17 @@ function main() {
 }
 
 main();
+
+document.addEventListener(
+  "dragstart",
+  (ev) => {
+    if (ev.target.href !== undefined) {
+      ev.dataTransfer.setData("text/uri-list", ev.target.href); // link
+    } else if (ev.target.src !== undefined) {
+      ev.dataTransfer.setData("text/uri-list", ev.target.src); // image link
+    } else {
+      ev.dataTransfer.setData("text/plain", ev.target.data); // plain text
+    }
+  },
+  false
+);
