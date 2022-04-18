@@ -133,9 +133,12 @@ class ASoul {
     );
     return distance;
   }
-  async sendMessage() {
+  async sendMessage(content) {
     $(`.message-box.${this.actor}`).remove(); // remove other message-boxs when generate
     await this.getRandMessage(this.actor).then((message) => {
+      if (content !== undefined) {
+        message = content;
+      }
       let div = document.createElement("div");
       $(div)
         .css({
@@ -151,8 +154,6 @@ class ASoul {
     $(`.message-box.${this.actor}`).remove();
   }
   async getRandMessage(actorName) {
-    // let reader = new FileReader();
-    // reader.readAsText("");
     const messageJSON = "./static/message.json";
     return await fetch(chrome.runtime.getURL(messageJSON))
       .then((RES) => RES.json())

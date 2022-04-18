@@ -57,7 +57,7 @@ src
  ├── manifest.json    // Chrome 扩展的描述文件
  ├── popup.html       // 弹窗页的.html文件
  ├── popup.js         // 弹窗页的.js文件
- └── static           // 存储静态文件如图片、图标
+ └── static           // 存储静态文件如图片、图标等
 ```
 
 #### 测试用例：

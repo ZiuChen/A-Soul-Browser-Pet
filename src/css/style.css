@@ -21,5 +21,6 @@
 }
 
 .message-box p {
+    font-size: 0.5em;
     margin: 5px 5px 5px 5px;
 }
