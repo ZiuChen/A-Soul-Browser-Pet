@@ -1,5 +1,10 @@
 const NAMETABLE = ["ava", "bella", "carol", "diana", "eileen"];
-const OPTIONSTABLE = ["followMouse", "followClick", "dontFollow"];
+const OPTIONSTABLE = [
+  "followMouse",
+  "followClick",
+  "followDBClick",
+  "dontFollow",
+];
 
 async function listenTableChange() {
   NAMETABLE.forEach((name) => {

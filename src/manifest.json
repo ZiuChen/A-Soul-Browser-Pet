@@ -31,7 +31,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["/static/img/*"],
+      "resources": ["/static/img/*", "/static/message.json"],
       "matches": ["<all_urls>"]
     }
   ],

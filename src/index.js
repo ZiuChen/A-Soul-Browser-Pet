@@ -1,5 +1,10 @@
 const NAMETABLE = ["ava", "bella", "carol", "diana", "eileen"];
-const OPTIONSTABLE = ["followMouse", "followClick", "dontFollow"];
+const OPTIONSTABLE = [
+  "followMouse",
+  "followClick",
+  "followDBClick",
+  "dontFollow",
+];
 const TABLE = {
   ava: {
     bait: "bowl",
@@ -19,7 +24,7 @@ const TABLE = {
 };
 class ASoul {
   constructor({ x, y, speed, actor }) {
-    this.selector = `.${actor}`;
+    this.selector = `.actor.${actor}`;
     this.speed = speed; // px per second
     this.status = "thinking"; // thinking | chasing | happy | unhappy
     this.actor = actor; // diana | ava | bella | carol | eileen
@@ -38,12 +43,13 @@ class ASoul {
       .addClass("actor")
       .addClass(this.actor)
       .addClass("draggable");
-    $("body").prepend(img);
+    $("body").append(img);
     beejdnd.init(); // draggable init
   }
   addEventListener() {
     $(this.selector)
       .mousedown((e) => {
+        this.removeMessage();
         $(this.selector).attr(
           "src",
           getImgURL(`./static/img/${this.actor}/interact_1.png`)
@@ -54,15 +60,20 @@ class ASoul {
         let min = 2;
         let max = 5;
         let rand = parseInt(Math.random() * (max - min + 1) + min, 10);
+        this.sendMessage();
         setTimeout(() => {
           $(this.selector).attr(
             "src",
             getImgURL(`./static/img/${this.actor}/interact_${rand}.png`)
           );
         }, 500);
+        setTimeout(() => {
+          this.removeMessage();
+        }, 1000);
       });
   }
   chase(bait) {
+    this.removeMessage();
     anime.remove(this.selector); // only chase the lastest candy
     this.updateDirection(bait.x);
     anime({
@@ -86,7 +97,6 @@ class ASoul {
       },
     });
   }
-  sendMessage(content) {}
   updateDirection(x) {
     if (x - 100 >= this.x) {
       // turn right
@@ -121,8 +131,35 @@ class ASoul {
     let distance = Math.sqrt(
       Math.pow(x - this.x - 100, 2) + Math.pow(y - this.y - 125, 2) // Adaptive vaule adjustment
     );
-
     return distance;
+  }
+  async sendMessage() {
+    $(`.message-box.${this.actor}`).remove(); // remove other message-boxs when generate
+    await this.getRandMessage(this.actor).then((message) => {
+      let div = document.createElement("div");
+      $(div)
+        .css({
+          left: this.x + 100,
+          top: this.y + 50,
+        })
+        .addClass(`message-box ${this.actor}`)
+        .append(`<p>${message}</p>`);
+      $("body").append(div);
+    });
+  }
+  async removeMessage() {
+    $(`.message-box.${this.actor}`).remove();
+  }
+  async getRandMessage(actorName) {
+    // let reader = new FileReader();
+    // reader.readAsText("");
+    const messageJSON = "./static/message.json";
+    return await fetch(chrome.runtime.getURL(messageJSON))
+      .then((RES) => RES.json())
+      .then((data) => {
+        let rand = randInt(0, data[actorName].length - 1); // choose one message return
+        return data[actorName][rand];
+      });
   }
 }
 class Bait {
@@ -150,7 +187,7 @@ class Bait {
     $(img)
       .css({ left: x - 75, top: y - 75, display: "none" })
       .addClass("bait");
-    $("body").prepend(img);
+    $("body").append(img);
     this.addFadeListener();
   }
   addFadeListener() {
@@ -177,6 +214,10 @@ function readConfig(calllBack) {
   chrome.storage.sync.get("CONFIG", function (data) {
     calllBack(JSON.parse(data["CONFIG"]));
   });
+}
+
+function randInt(min, max) {
+  return parseInt(Math.random() * (max - min + 1) + min, 10);
 }
 
 function documentListenerDebounce(fun, time) {
@@ -255,7 +296,9 @@ function main() {
           actor: actorName,
         });
         if (actorConfig.options.followClick) {
-          // followClick(actor);
+          followClick(actor);
+        }
+        if (actorConfig.options.followDBClick) {
           followDBClick(actor);
         }
         if (actorConfig.options.followMouse) {

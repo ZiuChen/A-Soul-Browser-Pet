@@ -10,3 +10,16 @@
     transform: scale(0.25);
     z-index: 999999;
 }
+
+.message-box {
+    position: fixed;
+    max-width: 150px;
+    border-radius: 5px;
+    opacity: 0.8;
+    z-index: 999999;
+    background-color: antiquewhite;
+}
+
+.message-box p {
+    margin: 5px 5px 5px 5px;
+}

@@ -7,6 +7,7 @@ const DEFAULTCONFIG = {
       options: {
         followMouse: false,
         followClick: false,
+        followDBClick: false,
         dontFollow: true,
       },
     },
@@ -15,6 +16,7 @@ const DEFAULTCONFIG = {
       options: {
         followMouse: false,
         followClick: false,
+        followDBClick: false,
         dontFollow: true,
       },
     },
@@ -23,6 +25,7 @@ const DEFAULTCONFIG = {
       options: {
         followMouse: false,
         followClick: false,
+        followDBClick: false,
         dontFollow: true,
       },
     },
@@ -31,7 +34,8 @@ const DEFAULTCONFIG = {
       options: {
         followMouse: false,
         followClick: true,
-        dontFollow: false,
+        followDBClick: false,
+        dontFollow: true,
       },
     },
     eileen: {
@@ -39,6 +43,7 @@ const DEFAULTCONFIG = {
       options: {
         followMouse: false,
         followClick: false,
+        followDBClick: false,
         dontFollow: true,
       },
     },
