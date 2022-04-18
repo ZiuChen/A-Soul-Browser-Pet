@@ -89,6 +89,7 @@ class ASoul {
       },
     });
   }
+  sendMessage(content) {}
   updateDirection(x) {
     if (x - 100 >= this.x) {
       // turn right
@@ -196,7 +197,22 @@ function documentListenerDebounce(fun, time) {
 
 function followClick(actor) {
   $(document).mousedown((e) => {
-    console.log(e);
+    $(".bait").remove(); // only one candy appear
+    Object.keys(TABLE).forEach((key) => {
+      if (actor.actor === key) {
+        let bait = new Bait({
+          x: e.clientX,
+          y: e.clientY,
+          type: TABLE[key].bait,
+        });
+        actor.chase(bait);
+      }
+    });
+  });
+}
+
+function followDBClick(actor) {
+  $(document).dblclick((e) => {
     $(".bait").remove(); // only one candy appear
     Object.keys(TABLE).forEach((key) => {
       if (actor.actor === key) {
@@ -237,13 +253,14 @@ function main() {
       if (actorConfig.enabled) {
         // enabled
         let actor = new ASoul({
-          x: 250,
-          y: 250,
+          x: 0,
+          y: $(window).height() - 100, // pic height
           speed: config.speed,
           actor: actorName,
         });
         if (actorConfig.options.followClick) {
-          followClick(actor);
+          // followClick(actor);
+          followDBClick(actor);
         }
         if (actorConfig.options.followMouse) {
           followMouse(actor);
