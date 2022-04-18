@@ -68,7 +68,6 @@ class ASoul {
   chase(bait) {
     anime.remove(this.selector); // only chase the lastest candy
     this.updateDirection(bait.x);
-    console.log(bait.x, bait.y);
     anime({
       targets: this.selector,
       left: bait.x - 50,
@@ -197,10 +196,15 @@ function documentListenerDebounce(fun, time) {
 
 function followClick(actor) {
   $(document).mousedown((e) => {
+    console.log(e);
     $(".bait").remove(); // only one candy appear
     Object.keys(TABLE).forEach((key) => {
       if (actor.actor === key) {
-        let bait = new Bait({ x: e.pageX, y: e.pageY, type: TABLE[key].bait });
+        let bait = new Bait({
+          x: e.clientX,
+          y: e.clientY,
+          type: TABLE[key].bait,
+        });
         actor.chase(bait);
       }
     });
@@ -210,8 +214,8 @@ function followClick(actor) {
 function followMouse(actor) {
   documentListenerDebounce((e) => {
     actor.chase({
-      x: e.pageX,
-      y: e.pageY,
+      x: e.clientX,
+      y: e.clientY,
       hadEaten: false,
       eaten: () => {
         return;
@@ -222,7 +226,7 @@ function followMouse(actor) {
 
 function towardFollowMouse(actor) {
   documentListenerDebounce((e) => {
-    actor.updateDirection(e.pageX);
+    actor.updateDirection(e.clientX);
   }, 15);
 }
 
