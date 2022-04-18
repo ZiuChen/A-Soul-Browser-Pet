@@ -1,10 +1,12 @@
 .actor {
+    position: fixed;
     height: 100px;
     width: 100px;
     z-index: 99999;
 }
 
 .bait {
+    position: fixed;
     transform: scale(0.25);
     z-index: 999999;
 }

@@ -1,7 +1,6 @@
 const DEFAULTCONFIG = {
   speed: 250,
   generateBait: false,
-  positionValue: "fixed",
   actors: {
     ava: {
       enabled: false,

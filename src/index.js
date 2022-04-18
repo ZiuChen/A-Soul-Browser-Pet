@@ -33,9 +33,6 @@ class ASoul {
     let img = document.createElement("img");
     img.src = getImgURL(`./static/img/${this.actor}/thinking.png`);
     img.draggable = false; // prevent native draggable event
-    readConfig((config) => {
-      $(img).css({ position: config.positionValue });
-    });
     $(img)
       .css({ left: x, top: y })
       .addClass("actor")
@@ -149,7 +146,6 @@ class Bait {
       if (config.generateBait) {
         $(img).css({ display: "" });
       }
-      $(img).css({ position: config.positionValue });
     });
     $(img)
       .css({ left: x - 75, top: y - 75, display: "none" })
