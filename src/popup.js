@@ -108,8 +108,15 @@ async function initConfigTable() {
 
 /* collect tab functions */
 
-async function appendCollectStorage() {}
+async function appendCollectStorage() {
+  await loadStorage("COLLECT").then((collect) => {
+    collect.forEach((item) => {});
+    console.log(collect);
+  });
+}
 
 /* enterence */
 initConfigTable();
 listenConfigTableChange();
+
+appendCollectStorage();

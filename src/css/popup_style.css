@@ -1,40 +1,41 @@
 body {
-    overflow-y: auto;
-    overflow-x: hidden;
-    width: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 500px;
 }
 ::-webkit-scrollbar {
-    display: none; /* Chrome Safari */
-  }
+  /* hide scrollbar */
+  display: none; /* Chrome Safari */
+}
 
 .actor-configs {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .common-configs {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .mdui-card {
-    width: 200px;
-    height: 100%;
-    margin: 10px 5px 5px 10px;
+  width: 200px;
+  height: 100%;
+  margin: 10px 5px 5px 10px;
 }
 
 .mdui-card-actions .total-switch-container {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .mdui-card-actions .detail-custom-container {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .mdui-list-item {
-    display: flex;
+  display: flex;
 }

@@ -52,11 +52,12 @@ const DEFAULTCONFIG = {
 };
 const DEFAULTCOLLECT = [
   {
-    collectTime: "2022-04-19 12:00",
     title: "Text",
-    content: `欢迎使用收藏功能，这是一条默认消息，点击右侧按钮可以删除。
-    将文字/链接/图片等任意内容拖拽到小然身上都可以把内容添加到此处哦~`,
+    content: `欢迎使用收藏功能，这是一条默认消息，可以点击右侧按钮删除。
+    将任意文字/链接/图片拖拽到小然身上就可以把内容收藏到此处哦~`,
+    type: "text",
     timeStamp: 1650340800000,
+    collectTime: "2022-04-19 12:00",
   },
 ];
 

@@ -99,19 +99,25 @@ class ASoul {
       })
       .on("drop", (ev) => {
         this.sendMessage("收到！");
-        console.log(ev);
         let content = ev.originalEvent.dataTransfer.getData("text/plain");
         let title = "Text";
+        let type = "text";
         try {
           // Image or Link innerHTML
           new URL(content);
-          title = content.split("#")[1];
-          content = content.split("#")[0];
+          let splits = content.split("#");
+          title = splits[splits.length - 1]; // avoid situation of link default have #
+          content = content.split("#" + title)[0];
+          if (isImg(content)) {
+            type = "image";
+          } else {
+            type = "link";
+          }
         } catch (err) {
           // plain text
           // do nothing
         }
-        pushCollect(title, content, new Date().getTime());
+        pushCollect(title, content, type, new Date().getTime());
       });
   }
   updateDirection(x) {
@@ -249,6 +255,7 @@ Date.prototype.format = function (fmt) {
 
 /* Chrome API applied */
 function getImgURL(src) {
+  // transfer common url to extension link
   if (chrome.runtime.getURL !== undefined) {
     return chrome.runtime.getURL(src);
   } else {
@@ -257,12 +264,14 @@ function getImgURL(src) {
 }
 
 async function loadStorage(key) {
+  // same to popup.js > loadStorage
   return await chrome.storage.sync.get(key).then((data) => {
     return JSON.parse(data[key]);
   });
 }
 
 async function updateStorage(key, value) {
+  // same to popup.js > updateStorage
   let option = {};
   option[key] = JSON.stringify(value);
   return await chrome.storage.sync.set(option);
@@ -271,6 +280,10 @@ async function updateStorage(key, value) {
 /* common functions */
 function randInt(min, max) {
   return parseInt(Math.random() * (max - min + 1) + min, 10);
+}
+
+function isImg(path) {
+  return /\w.(png|jpg|jpeg|svg|webp|gif|bmp)$/i.test(path);
 }
 
 function documentListenerDebounce(fun, time) {
@@ -286,15 +299,21 @@ function documentListenerDebounce(fun, time) {
 }
 
 /* collect relative */
-async function pushCollect(title, data, timeStamp) {
+async function pushCollect(title, data, type, timeStamp) {
   loadStorage("COLLECT").then((collect) => {
     collect.push({
       title: title,
       content: data,
+      type: type,
       timeStamp: timeStamp,
       collectTime: new Date(timeStamp).format("YYYY-MM-DD HH:mm"),
     });
-    updateStorage("COLLECT", collect);
+    updateStorage("COLLECT", collect).then(async (res) => {
+      // FIXME: debug log, remember to remove this
+      await loadStorage("COLLECT").then((data) => {
+        console.log(data);
+      });
+    });
   });
 }
 
@@ -382,9 +401,9 @@ main();
 document.addEventListener(
   "dragstart",
   (ev) => {
-    console.log(ev);
     if (ev.target.href !== undefined) {
       // link
+      // pass title with #
       ev.dataTransfer.setData(
         "text/plain",
         ev.target.href + "#" + ev.target.innerHTML
