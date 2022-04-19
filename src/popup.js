@@ -110,7 +110,7 @@ async function initConfigTable() {
 async function appendCollectStorage() {
   await loadStorage("COLLECT").then((collect) => {
     if (collect.length === 0) {
-      // content empty
+      // append empty status
       $(".collects ul").append(
         `<div class="collect-tip"> 暂时没有收藏内容哦~ </div>`
       );
@@ -145,14 +145,13 @@ async function addCollectRemoveListener() {
         ? ev.target.parentElement.id
         : ev.target.parentElement.parentElement.id; // cant get parent node sometimes
     $(`#${collectID}`).remove(); // remove this collect's DOM
+    if ($(".collects ul li").length === 0) {
+      // append empty status
+      $(".collects ul").append(
+        `<div class="collect-tip"> 暂时没有收藏内容哦~ </div>`
+      );
+    }
     await loadStorage("COLLECT").then(async (collect) => {
-      if (collect.length === 0) {
-        // content empty
-        $(".collects ul").append(
-          `<div class="collect-tip"> 暂时没有收藏内容哦~ </div>`
-        );
-        return;
-      }
       await findByKey(collect, "timeStamp", parseInt(collectID)).then((res) => {
         collect.splice(collect.indexOf(res[0]), 1); // remove this collect
         updateStorage("COLLECT", collect);
