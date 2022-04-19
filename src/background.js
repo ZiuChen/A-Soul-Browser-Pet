@@ -52,9 +52,8 @@ const DEFAULTCONFIG = {
 };
 const DEFAULTCOLLECT = [
   {
-    title: "Text",
-    content: `欢迎使用收藏功能，这是一条默认消息，可以点击右侧按钮删除。
-    将任意文字/链接/图片拖拽到小然身上就可以把内容收藏到此处哦~`,
+    title: "文本",
+    content: `欢迎使用收藏功能，将任意文字/链接/图片拖拽到小然身上就可以把内容收藏到此处，点击此消息可将内容复制到剪切板，点击右侧按钮删除此条目。`,
     type: "text",
     timeStamp: 1650340800000,
     collectTime: "2022-04-19 12:00",

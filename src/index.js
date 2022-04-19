@@ -100,7 +100,7 @@ class ASoul {
       .on("drop", (ev) => {
         this.sendMessage("收到！");
         let content = ev.originalEvent.dataTransfer.getData("text/plain");
-        let title = "Text";
+        let title = "文本";
         let type = "text";
         try {
           // Image or Link innerHTML
@@ -410,7 +410,7 @@ document.addEventListener(
       );
     } else if (ev.target.src !== undefined) {
       // image link
-      ev.dataTransfer.setData("text/plain", ev.target.src + "#" + "Image");
+      ev.dataTransfer.setData("text/plain", ev.target.src + "#" + "图像");
     } else {
       // plain text
       ev.dataTransfer.setData("text/html", ev.target.data);

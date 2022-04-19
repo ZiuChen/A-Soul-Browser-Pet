@@ -1,3 +1,4 @@
+/* overall */
 body {
   overflow-y: auto;
   overflow-x: hidden;
@@ -8,6 +9,9 @@ body {
   display: none; /* Chrome Safari */
 }
 
+/* collect tab */
+
+/* config tab*/
 .actor-configs {
   display: flex;
   flex-direction: row;

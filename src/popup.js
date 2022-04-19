@@ -107,11 +107,35 @@ async function initConfigTable() {
 }
 
 /* collect tab functions */
-
 async function appendCollectStorage() {
   await loadStorage("COLLECT").then((collect) => {
-    collect.forEach((item) => {});
-    console.log(collect);
+    sortByProp(collect, "timeStamp", false).then((data) => {
+      data.forEach((item) => {
+        console.log(item.content);
+        $(".collects ul").append(/* html */ `
+        <li id="${item.timeStamp}" class="mdui-list-item mdui-ripple">
+        <div class="mdui-list-item-content">
+          <div class="mdui-list-item-title mdui-list-item-one-line collect-title">${item.title}</div>
+          <div class="mdui-list-item-text mdui-list-item-two-line">
+            <span class="mdui-text-color-theme-text collect-collectTime">${item.collectTime}</span>
+            <span class="mdui-text-color-theme-text collect-content"></span>
+          </div>
+        </div>
+        <svg class="mdui-list-item-icon collect-remove-icon" t="1650358949716" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20746" width="200" height="200"><path d="M725.333333 128a85.333333 85.333333 0 0 1 85.333334 85.333333v682.666667l-298.666667-128-298.666667 128V213.333333a85.333333 85.333333 0 0 1 85.333334-85.333333h426.666666M348.586667 366.08L451.84 469.333333l-103.253333 102.826667 60.586666 60.586667L512 529.493333l102.826667 103.253334 60.586666-60.586667L572.16 469.333333l103.253333-103.253333-60.586666-60.16L512 408.746667 409.173333 305.92 348.586667 366.08z" fill="" p-id="20747"></path></svg>
+        </li>`);
+        $(`#${item.timeStamp} .collect-content`).text(item.content); // avoid text include <tags> parsed to html
+      });
+    });
+  });
+}
+
+async function sortByProp(array, prop, order) {
+  return await array.sort((obj1, obj2) => {
+    if (order) {
+      return obj1[prop] - obj2[prop];
+    } else {
+      return obj2[prop] - obj1[prop];
+    }
   });
 }
 
