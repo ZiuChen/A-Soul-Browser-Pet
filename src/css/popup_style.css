@@ -1,6 +1,17 @@
+body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 500px;
+}
+::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+
 .actor-configs {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .common-configs {

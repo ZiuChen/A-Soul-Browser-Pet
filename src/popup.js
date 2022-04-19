@@ -1,3 +1,4 @@
+/* default TABLEs */
 const NAMETABLE = ["ava", "bella", "carol", "diana", "eileen"];
 const OPTIONSTABLE = [
   "followMouse",
@@ -6,13 +7,28 @@ const OPTIONSTABLE = [
   "dontFollow",
 ];
 
-async function listenTableChange() {
+/* Chrome API applied */
+async function loadStorage(key) {
+  // Already initialized in background.js
+  return await chrome.storage.sync.get(key).then((data) => {
+    return JSON.parse(data[key]);
+  });
+}
+
+async function updateStorage(key, value) {
+  let option = {};
+  option[key] = JSON.stringify(value);
+  return await chrome.storage.sync.set(option);
+}
+
+/* config tab functions */
+async function listenConfigTableChange() {
   NAMETABLE.forEach((name) => {
     $(`.${name}`).change(async (e) => {
       let actorName = e.currentTarget.classList[1]; // actor name
       let optionName = e.target.className; // changed option
       let optionStatus = e.target.checked;
-      await loadConfig()
+      await loadStorage("CONFIG")
         .then((config) => {
           if (optionName === "enabled") {
             // enabled status changed
@@ -28,7 +44,7 @@ async function listenTableChange() {
           return config;
         })
         .then((newConfig) => {
-          updateConfig(newConfig);
+          updateStorage("CONFIG", newConfig);
         });
       // additional effect
       if (optionName === "enabled") {
@@ -44,41 +60,30 @@ async function listenTableChange() {
   });
   $(".speed").change(async (e) => {
     // speed config changed
-    await loadConfig()
+    await loadStorage("CONFIG")
       .then((config) => {
         config.speed = e.target.value; // DIFFERENCE POINT
         return config;
       })
       .then((newConfig) => {
-        updateConfig(newConfig);
+        updateStorage("CONFIG", newConfig);
       });
   });
   $(".generateBait").change(async (e) => {
     // generateBait config changed
-    await loadConfig()
+    await loadStorage("CONFIG")
       .then((config) => {
         config.generateBait = e.target.checked; // DIFFERENCE POINT
         return config;
       })
       .then((newConfig) => {
-        updateConfig(newConfig);
+        updateStorage("CONFIG", newConfig);
       });
   });
 }
 
-async function loadConfig() {
-  // Already initialized in background.js
-  return await chrome.storage.sync.get("CONFIG").then((data) => {
-    return JSON.parse(data["CONFIG"]);
-  });
-}
-
-async function updateConfig(config) {
-  return await chrome.storage.sync.set({ CONFIG: JSON.stringify(config) });
-}
-
-async function initTable() {
-  await loadConfig().then((config) => {
+async function initConfigTable() {
+  await loadStorage("CONFIG").then((config) => {
     NAMETABLE.forEach((actorName) => {
       // init enabled status
       let enableStatus = config.actors[actorName].enabled;
@@ -101,5 +106,10 @@ async function initTable() {
   });
 }
 
-initTable();
-listenTableChange();
+/* collect tab functions */
+
+async function appendCollectStorage() {}
+
+/* enterence */
+initConfigTable();
+listenConfigTableChange();
