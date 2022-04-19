@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./css/popup_style.css" />
     <link rel="stylesheet" href="./lib/mdui.min.css" />
-    <title>Setting</title>
+    <title>Popup</title>
   </head>
   <body>
     <div class="mdui-appbar">
-      <div class="mdui-tab mdui-color-theme" mdui-tab>
+      <div class="mdui-tab mdui-color-indigo-200" mdui-tab>
         <a href="#tab1-collect" class="mdui-ripple mdui-ripple-white">
           收藏内容
         </a>
@@ -19,7 +19,9 @@
     </div>
     <div id="tab1-collect">
       <div class="mdui-container collects">
-        <ul class="mdui-list mdui-list-dense"></ul>
+        <ul class="mdui-list mdui-list-dense">
+          <!-- inject dynamically by popup.js -->
+        </ul>
       </div>
     </div>
     <div id="tab2-setting">

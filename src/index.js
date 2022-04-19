@@ -308,12 +308,7 @@ async function pushCollect(title, data, type, timeStamp) {
       timeStamp: timeStamp,
       collectTime: new Date(timeStamp).format("YYYY-MM-DD HH:mm"),
     });
-    updateStorage("COLLECT", collect).then(async (res) => {
-      // FIXME: debug log, remember to remove this
-      await loadStorage("COLLECT").then((data) => {
-        console.log(data);
-      });
-    });
+    updateStorage("COLLECT", collect);
   });
 }
 
@@ -406,7 +401,7 @@ document.addEventListener(
       // pass title with #
       ev.dataTransfer.setData(
         "text/plain",
-        ev.target.href + "#" + ev.target.innerHTML
+        ev.target.href + "#" + ev.target.innerText
       );
     } else if (ev.target.src !== undefined) {
       // image link

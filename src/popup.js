@@ -109,21 +109,53 @@ async function initConfigTable() {
 /* collect tab functions */
 async function appendCollectStorage() {
   await loadStorage("COLLECT").then((collect) => {
+    if (collect.length === 0) {
+      // content empty
+      $(".collects ul").append(
+        `<div class="collect-tip"> 暂时没有收藏内容哦~ </div>`
+      );
+      return;
+    }
     sortByProp(collect, "timeStamp", false).then((data) => {
+      // use timeStamp as the ID of each collect
       data.forEach((item) => {
-        console.log(item.content);
         $(".collects ul").append(/* html */ `
         <li id="${item.timeStamp}" class="mdui-list-item mdui-ripple">
         <div class="mdui-list-item-content">
-          <div class="mdui-list-item-title mdui-list-item-one-line collect-title">${item.title}</div>
+          <div class="mdui-list-item-title mdui-list-item-one-line collect-title"></div>
           <div class="mdui-list-item-text mdui-list-item-two-line">
             <span class="mdui-text-color-theme-text collect-collectTime">${item.collectTime}</span>
             <span class="mdui-text-color-theme-text collect-content"></span>
           </div>
         </div>
-        <svg class="mdui-list-item-icon collect-remove-icon" t="1650358949716" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20746" width="200" height="200"><path d="M725.333333 128a85.333333 85.333333 0 0 1 85.333334 85.333333v682.666667l-298.666667-128-298.666667 128V213.333333a85.333333 85.333333 0 0 1 85.333334-85.333333h426.666666M348.586667 366.08L451.84 469.333333l-103.253333 102.826667 60.586666 60.586667L512 529.493333l102.826667 103.253334 60.586666-60.586667L572.16 469.333333l103.253333-103.253333-60.586666-60.16L512 408.746667 409.173333 305.92 348.586667 366.08z" fill="" p-id="20747"></path></svg>
+        <svg class="mdui-list-item-icon mdui-ripple collect-remove-icon" t="1650358949716" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20746" width="200" height="200"><path d="M725.333333 128a85.333333 85.333333 0 0 1 85.333334 85.333333v682.666667l-298.666667-128-298.666667 128V213.333333a85.333333 85.333333 0 0 1 85.333334-85.333333h426.666666M348.586667 366.08L451.84 469.333333l-103.253333 102.826667 60.586666 60.586667L512 529.493333l102.826667 103.253334 60.586666-60.586667L572.16 469.333333l103.253333-103.253333-60.586666-60.16L512 408.746667 409.173333 305.92 348.586667 366.08z" fill="" p-id="20747"></path></svg>
+        
         </li>`);
-        $(`#${item.timeStamp} .collect-content`).text(item.content); // avoid text include <tags> parsed to html
+        $(`#${item.timeStamp} .collect-content`).text(item.content); // avoid text including <tags> parsed to html
+        $(`#${item.timeStamp} .collect-title`).text(item.title);
+      });
+    });
+  });
+}
+
+async function addCollectRemoveListener() {
+  $(".collect-remove-icon").click(async (ev) => {
+    let collectID =
+      ev.target.parentElement.parentElement.id === ""
+        ? ev.target.parentElement.id
+        : ev.target.parentElement.parentElement.id; // cant get parent node sometimes
+    $(`#${collectID}`).remove(); // remove this collect's DOM
+    await loadStorage("COLLECT").then(async (collect) => {
+      if (collect.length === 0) {
+        // content empty
+        $(".collects ul").append(
+          `<div class="collect-tip"> 暂时没有收藏内容哦~ </div>`
+        );
+        return;
+      }
+      await findByKey(collect, "timeStamp", parseInt(collectID)).then((res) => {
+        collect.splice(collect.indexOf(res[0]), 1); // remove this collect
+        updateStorage("COLLECT", collect);
       });
     });
   });
@@ -139,8 +171,17 @@ async function sortByProp(array, prop, order) {
   });
 }
 
+async function findByKey(array, key, value) {
+  return await array.filter((item) => {
+    return item[key] === value;
+  });
+}
+
 /* enterence */
 initConfigTable();
 listenConfigTableChange();
 
-appendCollectStorage();
+appendCollectStorage().then(() => {
+  // async NECESSARY
+  addCollectRemoveListener();
+});

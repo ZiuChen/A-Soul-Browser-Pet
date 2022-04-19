@@ -1,8 +1,6 @@
 /* overall */
 body {
-  overflow-y: auto;
-  overflow-x: hidden;
-  width: 500px;
+  width: 500px; /* max size of popup.html */
 }
 ::-webkit-scrollbar {
   /* hide scrollbar */
@@ -10,6 +8,17 @@ body {
 }
 
 /* collect tab */
+.collect-content {
+  word-break: break-all;
+}
+
+.collect-tip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  font-size: 1.2em;
+}
 
 /* config tab*/
 .actor-configs {
