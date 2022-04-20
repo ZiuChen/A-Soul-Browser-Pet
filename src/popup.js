@@ -234,7 +234,7 @@ function copyText(text) {
 }
 
 async function copyImage(url) {
-  // only png supported
+  // only support png
   try {
     const data = await fetch(url, { mode: "no-cors" });
     const blob = await data.blob();
@@ -245,6 +245,7 @@ async function copyImage(url) {
     ]);
     mdui.snackbar("图片已复制到剪切板");
   } catch (err) {
+    window.open(url);
     mdui.snackbar("出错了：" + err);
   }
 }
