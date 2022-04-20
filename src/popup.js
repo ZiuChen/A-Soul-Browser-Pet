@@ -138,6 +138,11 @@ async function appendCollectStorage() {
         </li>`);
         $(`#${item.timeStamp} .collect-content`).text(item.content); // avoid text including <tags> parsed to html
         $(`#${item.timeStamp} .collect-title`).text(item.title);
+        new mdui.Tooltip(`.collect-remove-icon`, {
+          position: "left",
+          content: "删除",
+          delay: 250,
+        });
       });
     });
   });
@@ -183,6 +188,7 @@ function handleCollectClick(collectObj) {
       return;
     case "link":
       window.open(collectObj.content);
+      mdui.snackbar("链接已打开");
       return;
   }
 }
@@ -203,47 +209,32 @@ async function findByKey(array, key, value) {
   });
 }
 
-// @Github zzm-note/SuperDrag MIT License
-function copyText(word) {
-  // navigator.clipboard.writeText(word)
-  //     .then(() => {
-  //         console.log('Text copied to clipboard');
-  //     })
-  //     .catch(err => {
-  //         // This can happen if the user denies clipboard permissions:
-  //         console.error('Could not copy text: ', err);
-  //     });
-  if (typeof navigator.clipboard == "undefined") {
-    console.log("navigator.clipboard");
-    var textArea = document.createElement("textarea");
-    textArea.value = word;
-    textArea.style.position = "fixed"; //avoid scrolling to bottom
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-      var successful = document.execCommand("copy");
-      var msg = successful ? "successful" : "unsuccessful";
-      console.log(msg);
-    } catch (err) {
-      console.warn("Was not possible to copy te text: ", err);
+function copyText(text) {
+  try {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text); // use navigator.clipboard
+    } else {
+      var textarea = document.createElement("textarea");
+      document.body.appendChild(textarea);
+      // hide this input area
+      textarea.style.position = "fixed";
+      textarea.style.clip = "rect(0 0 0 0)";
+      textarea.style.top = "10px";
+      // execute
+      textarea.value = text;
+      textarea.select();
+      document.execCommand("copy", true);
+      // remove the input area
+      document.body.removeChild(textarea);
     }
-
-    document.body.removeChild(textArea);
-    return;
+    mdui.snackbar("文本已复制到剪切板");
+  } catch (err) {
+    mdui.snackbar("出错了：" + err);
   }
-  navigator.clipboard.writeText(word).then(
-    function () {
-      console.log(`successful!`);
-    },
-    function (err) {
-      console.warn("unsuccessful!", err);
-    }
-  );
 }
 
 async function copyImage(url) {
+  // only png supported
   try {
     const data = await fetch(url, { mode: "no-cors" });
     const blob = await data.blob();
@@ -252,9 +243,9 @@ async function copyImage(url) {
         [blob.type]: blob,
       }),
     ]);
-    console.log("Image copied.");
+    mdui.snackbar("图片已复制到剪切板");
   } catch (err) {
-    console.error(err.name, err.message);
+    mdui.snackbar("出错了：" + err);
   }
 }
 
