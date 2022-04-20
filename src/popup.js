@@ -143,7 +143,7 @@ async function appendCollectStorage() {
           new mdui.Tooltip(icon, {
             position: "left",
             content: "删除",
-            delay: 250,
+            delay: 100,
           });
         });
       });
@@ -153,6 +153,7 @@ async function appendCollectStorage() {
 
 async function addCollectRemoveListener() {
   $(".collect-remove-icon").click(async (ev) => {
+    $(".mdui-tooltip-open").remove(); // remove opening tooltip currently
     let collectID =
       ev.target.parentElement.parentElement.id === ""
         ? ev.target.parentElement.id
