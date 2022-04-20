@@ -1,6 +1,7 @@
 /* overall */
 body {
   width: 500px; /* max size of popup.html */
+  height: 500px; /* max size of popup.html */
 }
 ::-webkit-scrollbar {
   /* hide scrollbar */
@@ -34,7 +35,7 @@ body {
 }
 
 .mdui-card {
-  width: 200px;
+  width: 120px;
   height: 100%;
   margin: 10px 5px 5px 10px;
 }

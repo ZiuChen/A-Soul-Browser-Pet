@@ -1,3 +1,8 @@
+/*
+ * background.js
+ * @Github ZiuChen
+ * Released under the MIT license
+ */
 /* default TABLEs */
 const DEFAULTCONFIG = {
   speed: 250,

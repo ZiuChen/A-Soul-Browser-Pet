@@ -1,3 +1,8 @@
+/*
+ * index.js
+ * @Github ZiuChen
+ * Released under the MIT license
+ */
 /* TABLES */
 const NAMETABLE = ["ava", "bella", "carol", "diana", "eileen"];
 const OPTIONSTABLE = [
@@ -29,7 +34,6 @@ class ASoul {
   constructor({ x, y, speed, actor }) {
     this.selector = `.actor.${actor}`;
     this.speed = speed; // px per second
-    this.status = "thinking"; // thinking | chasing | happy | unhappy
     this.actor = actor; // diana | ava | bella | carol | eileen
     this.generateActor({ x: x, y: y });
     this.addEventListener();
