@@ -138,10 +138,13 @@ async function appendCollectStorage() {
         </li>`);
         $(`#${item.timeStamp} .collect-content`).text(item.content); // avoid text including <tags> parsed to html
         $(`#${item.timeStamp} .collect-title`).text(item.title);
-        new mdui.Tooltip(`.collect-remove-icon`, {
-          position: "left",
-          content: "删除",
-          delay: 250,
+        $(".collect-remove-icon").each((i, icon) => {
+          // @Github zdhxiong/mdui/issues/76
+          new mdui.Tooltip(icon, {
+            position: "left",
+            content: "删除",
+            delay: 250,
+          });
         });
       });
     });
