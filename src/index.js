@@ -28,6 +28,28 @@ const TABLE = {
     bait: "icecream",
   },
 };
+const POSITIONS = [
+  {
+    x: 0,
+    y: $(window).height() - 100,
+  },
+  {
+    x: $(window).width() - 100,
+    y: $(window).height() - 100,
+  },
+  {
+    x: 0,
+    y: 0,
+  },
+  {
+    x: $(window).width() - 100,
+    y: 0,
+  },
+  {
+    x: ($(window).width() - 100) / 2,
+    y: $(window).height() - 100,
+  },
+];
 
 /* class definition */
 class ASoul {
@@ -88,12 +110,9 @@ class ASoul {
       })
       .mouseup((e) => {
         this.updatePosition(this.getPosition(this.selector));
-        let min = 2;
-        let max = 5;
-        let rand = parseInt(Math.random() * (max - min + 1) + min, 10);
         this.sendMessage();
         setTimeout(() => {
-          this.changeStatus("interact_" + rand);
+          this.changeStatus("interact_" + randInt(2, 9));
         }, 500);
       })
       // drag & drop event
@@ -371,16 +390,18 @@ function towardFollowMouse(actor) {
 /* main */
 async function main() {
   await loadStorage("CONFIG").then((config) => {
-    NAMETABLE.forEach((actorName) => {
+    let position = 0;
+    NAMETABLE.forEach((actorName, index) => {
       let actorConfig = config.actors[actorName];
       if (actorConfig.enabled) {
         // enabled
         let actor = new ASoul({
-          x: 0,
-          y: $(window).height() - 100, // pic height
+          x: POSITIONS[position].x,
+          y: POSITIONS[position].y,
           speed: config.speed,
           actor: actorName,
         });
+        position += 1;
         if (actorConfig.options.followClick) {
           followClick(actor);
         }
