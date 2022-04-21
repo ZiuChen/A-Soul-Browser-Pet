@@ -34,16 +34,16 @@ const POSITIONS = [
     y: $(window).height() - 100,
   },
   {
-    x: $(window).width() - 100,
-    y: $(window).height() - 100,
-  },
-  {
     x: 0,
     y: 0,
   },
   {
     x: $(window).width() - 100,
     y: 0,
+  },
+  {
+    x: $(window).width() - 100,
+    y: $(window).height() - 100,
   },
   {
     x: ($(window).width() - 100) / 2,
@@ -112,7 +112,7 @@ class ASoul {
         this.updatePosition(this.getPosition(this.selector));
         this.sendMessage();
         setTimeout(() => {
-          this.changeStatus("interact_" + randInt(2, 9));
+          this.changeStatus("rand");
         }, 500);
       })
       // drag & drop event
@@ -121,7 +121,6 @@ class ASoul {
         ev.originalEvent.preventDefault(); // prevent default behavior
       })
       .on("drop", (ev) => {
-        this.sendMessage("收到！");
         let content = ev.originalEvent.dataTransfer.getData("text/plain");
         let title = "文本";
         let type = "text";
@@ -140,6 +139,8 @@ class ASoul {
           // plain text
           // do nothing
         }
+        this.sendMessage("收到！");
+        this.changeStatus("happy");
         pushCollect(title, content, type, new Date().getTime());
       });
   }
@@ -162,6 +163,9 @@ class ASoul {
     this.y = y;
   }
   changeStatus(status) {
+    if (status === "rand") {
+      status = "interact_" + randInt(2, 9).toString();
+    }
     $(this.selector).attr(
       "src",
       getImgURL(`./static/img/${this.actor}/${status}.png`)
