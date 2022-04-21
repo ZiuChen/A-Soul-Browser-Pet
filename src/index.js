@@ -183,7 +183,7 @@ class ASoul {
     );
     return distance;
   }
-  async sendMessage(content) {
+  async sendMessage(content, permanently) {
     $(`.message-box-asoul.${this.actor}`).remove(); // remove other message-boxs when generate
     await this.getRandMessage(this.actor).then((message) => {
       if (content !== undefined) {
@@ -198,9 +198,11 @@ class ASoul {
         .addClass(`message-box-asoul ${this.actor}`)
         .append(`<p>${message}</p>`);
       $("body").append(div);
-      setTimeout(() => {
-        this.removeMessage(); // auto remove after append
-      }, 1000);
+      if (!permanently) {
+        setTimeout(() => {
+          this.removeMessage(); // auto remove after append
+        }, 1000);
+      }
     });
   }
   async removeMessage() {
@@ -391,6 +393,29 @@ function towardFollowMouse(actor) {
   }, 15);
 }
 
+/* drag & collect */
+document.addEventListener(
+  "dragstart",
+  (ev) => {
+    if (ev.target.href !== undefined) {
+      // link
+      // pass title with #
+      let title = "";
+      if (ev.target.innerText === "") {
+        title = "链接";
+      }
+      ev.dataTransfer.setData("text/plain", ev.target.href + "#" + title);
+    } else if (ev.target.src !== undefined) {
+      // image link
+      ev.dataTransfer.setData("text/plain", ev.target.src + "#" + "图像");
+    } else {
+      // plain text
+      ev.dataTransfer.setData("text/html", ev.target.data);
+    }
+  },
+  false
+);
+
 /* main */
 async function main() {
   await loadStorage("CONFIG").then((config) => {
@@ -421,24 +446,3 @@ async function main() {
 }
 
 main();
-
-document.addEventListener(
-  "dragstart",
-  (ev) => {
-    if (ev.target.href !== undefined) {
-      // link
-      // pass title with #
-      ev.dataTransfer.setData(
-        "text/plain",
-        ev.target.href + "#" + ev.target.innerText
-      );
-    } else if (ev.target.src !== undefined) {
-      // image link
-      ev.dataTransfer.setData("text/plain", ev.target.src + "#" + "图像");
-    } else {
-      // plain text
-      ev.dataTransfer.setData("text/html", ev.target.data);
-    }
-  },
-  false
-);
