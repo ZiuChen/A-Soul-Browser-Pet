@@ -50,6 +50,14 @@ body {
   flex-direction: column;
 }
 
-.mdui-list-item {
+.ul-style-wrapper {
   display: flex;
+}
+
+.common-configs .mdui-list-item {
+  width: 140px;
+}
+
+.common-configs .mdui-textfield-input {
+  width: 50px;
 }

@@ -394,33 +394,35 @@ function towardFollowMouse(actor) {
 }
 
 /* drag & collect */
-document.addEventListener(
-  "dragstart",
-  (ev) => {
-    if (ev.target.href !== undefined) {
-      // link
-      // pass title with #
-      let title = "";
-      if (ev.target.innerText === "") {
-        title = "链接";
+function addDragListener() {
+  document.addEventListener(
+    "dragstart",
+    (ev) => {
+      if (ev.target.href !== undefined) {
+        // link
+        // pass title with #
+        let title = "";
+        if (ev.target.innerText === "") {
+          title = "链接";
+        }
+        ev.dataTransfer.setData("text/plain", ev.target.href + "#" + title);
+      } else if (ev.target.src !== undefined) {
+        // image link
+        ev.dataTransfer.setData("text/plain", ev.target.src + "#" + "图像");
+      } else {
+        // plain text
+        ev.dataTransfer.setData("text/html", ev.target.data);
       }
-      ev.dataTransfer.setData("text/plain", ev.target.href + "#" + title);
-    } else if (ev.target.src !== undefined) {
-      // image link
-      ev.dataTransfer.setData("text/plain", ev.target.src + "#" + "图像");
-    } else {
-      // plain text
-      ev.dataTransfer.setData("text/html", ev.target.data);
-    }
-  },
-  false
-);
+    },
+    false
+  );
+}
 
 /* main */
 async function main() {
   await loadStorage("CONFIG").then((config) => {
     let position = 0;
-    NAMETABLE.forEach((actorName, index) => {
+    NAMETABLE.forEach((actorName) => {
       let actorConfig = config.actors[actorName];
       if (actorConfig.enabled) {
         // enabled
@@ -442,6 +444,9 @@ async function main() {
         }
       }
     });
+    if (config.collectEnabled) {
+      addDragListener();
+    }
   });
 }
 

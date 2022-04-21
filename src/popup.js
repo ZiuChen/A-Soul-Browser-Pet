@@ -85,6 +85,17 @@ async function listenConfigTableChange() {
         updateStorage("CONFIG", newConfig);
       });
   });
+  $(".collectEnabled").change(async (e) => {
+    // collectEnabled config changed
+    await loadStorage("CONFIG")
+      .then((config) => {
+        config.collectEnabled = e.target.checked; // DIFFERENCE POINT
+        return config;
+      })
+      .then((newConfig) => {
+        updateStorage("CONFIG", newConfig);
+      });
+  });
 }
 
 async function initConfigTable() {
@@ -108,6 +119,7 @@ async function initConfigTable() {
     });
     $(".speed").get(0).value = config.speed;
     $(".generateBait").get(0).checked = config.generateBait;
+    $(".collectEnabled").get(0).checked = config.collectEnabled;
   });
 }
 

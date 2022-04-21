@@ -243,24 +243,40 @@
         </div>
       </div>
       <div class="mdui-container common-configs">
-        <li class="mdui-list-item mdui-ripple">
-          <div class="mdui-list-item-content">生成诱饵</div>
-          <label class="mdui-switch">
-            <input type="checkbox" title="generateBait" class="generateBait" />
-            <i class="mdui-switch-icon"></i>
-          </label>
-        </li>
-        <li class="mdui-list-item mdui-ripple">
-          <div class="mdui-list-item-content">速度</div>
-          <input
-            class="mdui-textfield-input speed"
-            type="number"
-            placeholder="速度"
-          />
-        </li>
+        <ul class="ul-style-wrapper">
+          <li class="mdui-list-item mdui-ripple">
+            <div class="mdui-list-item-content">诱饵</div>
+            <label class="mdui-switch">
+              <input
+                type="checkbox"
+                title="generateBait"
+                class="generateBait"
+              />
+              <i class="mdui-switch-icon"></i>
+            </label>
+          </li>
+          <li class="mdui-list-item mdui-ripple">
+            <div class="mdui-list-item-content">收藏</div>
+            <label class="mdui-switch">
+              <input
+                type="checkbox"
+                title="collectEnabled"
+                class="collectEnabled"
+              />
+              <i class="mdui-switch-icon"></i>
+            </label>
+          </li>
+          <li class="mdui-list-item mdui-ripple">
+            <div class="mdui-list-item-content">速度</div>
+            <input
+              class="mdui-textfield-input speed"
+              type="number"
+              placeholder="速度"
+            />
+          </li>
+        </ul>
       </div>
     </div>
-
     <script src="./lib/mdui.min.js"></script>
     <script src="./lib/jquery.min.js"></script>
     <script src="popup.js"></script>

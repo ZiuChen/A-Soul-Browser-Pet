@@ -7,6 +7,7 @@
 const DEFAULTCONFIG = {
   speed: 250,
   generateBait: false,
+  collectEnabled: true,
   actors: {
     ava: {
       enabled: false,
