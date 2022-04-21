@@ -126,7 +126,6 @@ class ASoul {
       let content = ev.originalEvent.dataTransfer.getData("text/plain");
       let title = "文本";
       let type = "text";
-      console.log(content);
       try {
         // Image or Link innerHTML
         new URL(content);
@@ -411,7 +410,6 @@ function addDragListener() {
         ev.dataTransfer.setData("text/plain", ev.target.href + "#" + title);
       } else if (ev.target.src !== undefined) {
         // image link
-        console.log("image link");
         ev.dataTransfer.setData("text/plain", ev.target.src + "#" + "图像");
       } else {
         // plain text
