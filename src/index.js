@@ -54,7 +54,7 @@ const POSITIONS = [
 /* class definition */
 class ASoul {
   constructor({ x, y, speed, actor }) {
-    this.selector = `.actor.${actor}`;
+    this.selector = `.actor-asoul.${actor}`;
     this.speed = speed; // px per second
     this.actor = actor; // diana | ava | bella | carol | eileen
     this.generateActor({ x: x, y: y });
@@ -70,7 +70,7 @@ class ASoul {
     img.draggable = false; // prevent native draggable event
     $(img)
       .css({ left: x, top: y })
-      .addClass("actor")
+      .addClass("actor-asoul")
       .addClass(this.actor)
       .addClass("draggable");
     $("body").append(img);
@@ -237,7 +237,7 @@ class Bait {
     });
     $(img)
       .css({ left: x - 75, top: y - 75, display: "none" })
-      .addClass("bait");
+      .addClass("bait-asoul");
     $("body").append(img);
     this.addFadeListener();
   }
@@ -338,7 +338,7 @@ async function pushCollect(title, data, type, timeStamp) {
 /* effect relative */
 function followClick(actor) {
   $(document).mousedown((e) => {
-    $(".bait").remove(); // only one candy appear
+    $(".bait-asoul").remove(); // only one candy appear
     Object.keys(TABLE).forEach((key) => {
       if (actor.actor === key) {
         let bait = new Bait({
@@ -354,7 +354,7 @@ function followClick(actor) {
 
 function followDBClick(actor) {
   $(document).dblclick((e) => {
-    $(".bait").remove(); // only one candy appear
+    $(".bait-asoul").remove(); // only one candy appear
     Object.keys(TABLE).forEach((key) => {
       if (actor.actor === key) {
         let bait = new Bait({

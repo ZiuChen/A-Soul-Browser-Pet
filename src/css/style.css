@@ -1,4 +1,4 @@
-.actor {
+.actor-asoul {
   position: fixed;
   height: 100px;
   width: 100px;
@@ -6,7 +6,7 @@
   border: 0px; /* avoid external style influence */
 }
 
-.bait {
+.bait-asoul {
   position: fixed;
   transform: scale(0.25);
   z-index: 999999;
