@@ -180,7 +180,7 @@ class ASoul {
     return distance;
   }
   async sendMessage(content) {
-    $(`.message-box.${this.actor}`).remove(); // remove other message-boxs when generate
+    $(`.message-box-asoul.${this.actor}`).remove(); // remove other message-boxs when generate
     await this.getRandMessage(this.actor).then((message) => {
       if (content !== undefined) {
         message = content;
@@ -191,7 +191,7 @@ class ASoul {
           left: this.x + 100,
           top: this.y + 50,
         })
-        .addClass(`message-box ${this.actor}`)
+        .addClass(`message-box-asoul ${this.actor}`)
         .append(`<p>${message}</p>`);
       $("body").append(div);
       setTimeout(() => {
@@ -200,7 +200,7 @@ class ASoul {
     });
   }
   async removeMessage() {
-    $(`.message-box.${this.actor}`).remove();
+    $(`.message-box-asoul.${this.actor}`).remove();
   }
   async getRandMessage(actorName) {
     const messageJSON = "./static/message.json";
