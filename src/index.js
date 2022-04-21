@@ -58,7 +58,7 @@ class ASoul {
     this.speed = speed; // px per second
     this.actor = actor; // diana | ava | bella | carol | eileen
     this.generateActor({ x: x, y: y });
-    this.addEventListener();
+    this.addClickEventListener();
     this.x = this.getPosition(this.selector).x;
     this.y = this.getPosition(this.selector).y;
     towardFollowMouse(this);
@@ -102,7 +102,7 @@ class ASoul {
       },
     });
   }
-  addEventListener() {
+  addClickEventListener() {
     // click on actor trigger events
     $(this.selector)
       .mousedown((e) => {
@@ -119,30 +119,33 @@ class ASoul {
       .on("dragover", (ev) => {
         // NECESSARY
         ev.originalEvent.preventDefault(); // prevent default behavior
-      })
-      .on("drop", (ev) => {
-        let content = ev.originalEvent.dataTransfer.getData("text/plain");
-        let title = "文本";
-        let type = "text";
-        try {
-          // Image or Link innerHTML
-          new URL(content);
-          let splits = content.split("#");
-          title = splits[splits.length - 1]; // avoid situation of link default have #
-          content = content.split("#" + title)[0];
-          if (isImg(content)) {
-            type = "image";
-          } else {
-            type = "link";
-          }
-        } catch (err) {
-          // plain text
-          // do nothing
-        }
-        this.sendMessage("收到！");
-        this.changeStatus("happy");
-        pushCollect(title, content, type, new Date().getTime());
       });
+  }
+  addDropEventListener() {
+    $(this.selector).on("drop", (ev) => {
+      let content = ev.originalEvent.dataTransfer.getData("text/plain");
+      let title = "文本";
+      let type = "text";
+      console.log(content);
+      try {
+        // Image or Link innerHTML
+        new URL(content);
+        let splits = content.split("#");
+        title = splits[splits.length - 1]; // avoid situation of link default have #
+        content = content.split("#" + title)[0];
+        if (isImg(content)) {
+          type = "image";
+        } else {
+          type = "link";
+        }
+      } catch (err) {
+        // plain text
+        // do nothing
+      }
+      this.sendMessage("收到！");
+      this.changeStatus("rand");
+      pushCollect(title, content, type, new Date().getTime());
+    });
   }
   updateDirection(x) {
     if (x - 100 >= this.x) {
@@ -401,13 +404,14 @@ function addDragListener() {
       if (ev.target.href !== undefined) {
         // link
         // pass title with #
-        let title = "";
-        if (ev.target.innerText === "") {
+        let title = ev.target.innerText;
+        if (title === "") {
           title = "链接";
         }
         ev.dataTransfer.setData("text/plain", ev.target.href + "#" + title);
       } else if (ev.target.src !== undefined) {
         // image link
+        console.log("image link");
         ev.dataTransfer.setData("text/plain", ev.target.src + "#" + "图像");
       } else {
         // plain text
@@ -441,6 +445,9 @@ async function main() {
         }
         if (actorConfig.options.followMouse) {
           followMouse(actor);
+        }
+        if (config.collectEnabled) {
+          actor.addDropEventListener();
         }
       }
     });
