@@ -4,9 +4,6 @@
   width: 100px;
   z-index: 99999;
   border: 0px; /* avoid external style influence */
-  filter: drop-shadow(
-    0px 0px 1px #000000
-  ); /* add shadow for png imgage with alpha data*/
 }
 
 .bait-asoul {
