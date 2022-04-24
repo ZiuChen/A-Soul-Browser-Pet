@@ -65,7 +65,7 @@ class ASoul {
   }
   generateActor({ x, y }) {
     let img = document.createElement("img");
-    img.src = getImgURL(`./static/img/${this.actor}/thinking.png`);
+    img.src = getImgURL(`./static/img/${this.actor}/thinking.gif`);
     img.alt = this.actor;
     img.draggable = false; // prevent native draggable event
     $(img)
@@ -170,7 +170,7 @@ class ASoul {
     }
     $(this.selector).attr(
       "src",
-      getImgURL(`./static/img/${this.actor}/${status}.png`)
+      getImgURL(`./static/img/${this.actor}/${status}.gif`)
     );
   }
   getPosition(selector) {
