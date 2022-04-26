@@ -51,53 +51,53 @@ const POSITIONS = [
   },
 ];
 
-/* class definition */
+/* Class Definition */
 class ASoul {
   constructor({ x, y, speed, actor }) {
-    this.selector = `.actor-asoul.${actor}`;
+    this.selector = ".actor-asoul." + actor;
     this.speed = speed; // px per second
     this.actor = actor; // diana | ava | bella | carol | eileen
     this.generateActor({ x: x, y: y });
     this.addClickEventListener();
     this.x = this.getPosition(this.selector).x;
     this.y = this.getPosition(this.selector).y;
-    towardFollowMouse(this);
   }
   generateActor({ x, y }) {
     let img = document.createElement("img");
-    img.src = getImgURL(`./static/img/${this.actor}/thinking.gif`);
     img.alt = this.actor;
     img.draggable = false; // prevent native draggable event
     $(img)
-      .css({ left: x, top: y })
       .addClass("actor-asoul")
+      .addClass("draggable")
       .addClass(this.actor)
-      .addClass("draggable");
+      .css({ left: x, top: y });
     $("body").append(img);
+    this.updateStatus("thinking");
     beejdnd.init(); // draggable init
+    Interactions.facingToMouse(this);
   }
   chase(bait) {
-    this.removeMessage();
-    anime.remove(this.selector); // only chase the lastest candy
+    this.removeMessage(this.actor);
     this.updateDirection(bait.x);
+    anime.remove(this.selector); // only chase the lastest candy
     anime({
       targets: this.selector,
       left: bait.x - 50,
       top: bait.y - 75,
-      duration: (this.getDistance(bait.x, bait.y) / this.speed) * 1000,
+      duration: (this.getDistanceToBait(bait.x, bait.y) / this.speed) * 1000,
       easing: "linear",
       update: () => {
         // call frequently when chasing
-        this.changeStatus("chasing");
+        this.updateStatus("chasing");
         this.x = this.getPosition(this.selector).x;
         this.y = this.getPosition(this.selector).y;
       },
       complete: () => {
         if (bait.hadEaten === false) {
           bait.eaten();
-          this.changeStatus("happy");
+          this.updateStatus("happy");
         } else {
-          this.changeStatus("unhappy");
+          this.updateStatus("unhappy");
         }
       },
     });
@@ -106,13 +106,13 @@ class ASoul {
     // click on actor trigger events
     $(this.selector)
       .mousedown((e) => {
-        this.changeStatus("interact_1");
+        this.updateStatus("interact_1");
       })
       .mouseup((e) => {
         this.updatePosition(this.getPosition(this.selector));
         this.sendMessage();
         setTimeout(() => {
-          this.changeStatus("rand");
+          this.updateStatus("rand");
         }, 500);
       })
       // drag & drop event
@@ -123,6 +123,11 @@ class ASoul {
   }
   addDropEventListener() {
     $(this.selector).on("drop", (ev) => {
+      processDropEvent(ev);
+      this.sendMessage("收到！");
+      this.updateStatus("rand");
+    });
+    async function processDropEvent(ev) {
       let content = ev.originalEvent.dataTransfer.getData("text/plain");
       let title = "文本";
       let type = "text";
@@ -141,10 +146,26 @@ class ASoul {
         // plain text
         // do nothing
       }
-      this.sendMessage("收到！");
-      this.changeStatus("rand");
-      pushCollect(title, content, type, new Date().getTime());
-    });
+      await pushCollect(title, content, type, new Date().getTime());
+    }
+    async function pushCollect(title, data, type, timeStamp) {
+      loadStorage("COLLECT").then((collect) => {
+        collect.push({
+          title: title,
+          content: data,
+          type: type,
+          timeStamp: timeStamp,
+          collectTime: new Date(timeStamp).format("YYYY-MM-DD HH:mm"),
+        });
+        updateStorage("COLLECT", collect);
+      });
+    }
+  }
+  getDistanceToBait(x, y) {
+    let distance = Math.sqrt(
+      Math.pow(x - this.x - 100, 2) + Math.pow(y - this.y - 125, 2) // Adaptive vaule adjustment
+    );
+    return distance;
   }
   updateDirection(x) {
     if (x - 100 >= this.x) {
@@ -160,11 +181,17 @@ class ASoul {
       });
     }
   }
+  getPosition(selector) {
+    return {
+      x: parseInt($(selector).css("left").split("px")[0] - 50),
+      y: parseInt($(selector).css("top").split("px")[0] - 50),
+    };
+  }
   updatePosition({ x, y }) {
     this.x = x;
     this.y = y;
   }
-  changeStatus(status) {
+  updateStatus(status) {
     if (status === "rand") {
       status = "interact_" + randInt(2, 9).toString();
     }
@@ -173,50 +200,38 @@ class ASoul {
       getImgURL(`./static/img/${this.actor}/${status}.gif`)
     );
   }
-  getPosition(selector) {
-    return {
-      x: parseInt($(selector).css("left").split("px")[0] - 50),
-      y: parseInt($(selector).css("top").split("px")[0] - 50),
-    };
-  }
-  getDistance(x, y) {
-    let distance = Math.sqrt(
-      Math.pow(x - this.x - 100, 2) + Math.pow(y - this.y - 125, 2) // Adaptive vaule adjustment
-    );
-    return distance;
-  }
   async sendMessage(content, permanently) {
-    $(`.message-box-asoul.${this.actor}`).remove(); // remove other message-boxs when generate
+    this.removeMessage(this.actor); // remove other message-boxs when generate
     await this.getRandMessage(this.actor).then((message) => {
       if (content !== undefined) {
         message = content;
       }
       let div = document.createElement("div");
       $(div)
+        .addClass("message-box-asoul")
+        .addClass(this.actor)
         .css({
           left: this.x + 100,
           top: this.y + 50,
         })
-        .addClass(`message-box-asoul ${this.actor}`)
         .append(`<p>${message}</p>`);
       $("body").append(div);
       if (!permanently) {
         setTimeout(() => {
-          this.removeMessage(); // auto remove after append
+          this.removeMessage(this.actor); // auto remove after append
         }, 1000);
       }
     });
   }
-  async removeMessage() {
-    $(`.message-box-asoul.${this.actor}`).remove();
+  async removeMessage(actorName) {
+    $(".message-box-asoul." + actorName).remove();
   }
   async getRandMessage(actorName) {
-    const messageJSON = "./static/message.json";
-    return await fetch(chrome.runtime.getURL(messageJSON))
+    return await fetch(chrome.runtime.getURL("./static/message.json"))
       .then((RES) => RES.json())
-      .then((data) => {
-        let rand = randInt(0, data[actorName].length - 1); // choose one message return
-        return data[actorName][rand];
+      .then((json) => {
+        let rand = randInt(0, json[actorName].length - 1); // choose one message return
+        return json[actorName][rand];
       });
   }
 }
@@ -244,8 +259,8 @@ class Bait {
       }
     });
     $(img)
-      .css({ left: x - 75, top: y - 75, display: "none" })
-      .addClass("bait-asoul");
+      .addClass("bait-asoul")
+      .css({ left: x - 75, top: y - 75, display: "none" });
     $("body").append(img);
     this.addFadeListener();
   }
@@ -261,30 +276,7 @@ class Bait {
   }
 }
 
-/* Date prototype expand */
-Date.prototype.format = function (fmt) {
-  let ret;
-  const opt = {
-    "Y+": this.getFullYear().toString(),
-    "M+": (this.getMonth() + 1).toString(),
-    "D+": this.getDate().toString(),
-    "H+": this.getHours().toString(),
-    "m+": this.getMinutes().toString(),
-    "S+": this.getSeconds().toString(),
-  };
-  for (let k in opt) {
-    ret = new RegExp("(" + k + ")").exec(fmt);
-    if (ret) {
-      fmt = fmt.replace(
-        ret[1],
-        ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, "0")
-      );
-    }
-  }
-  return fmt;
-};
-
-/* Chrome API applied */
+/* Chrome API Applied */
 function getImgURL(src) {
   // transfer common url to extension link
   if (chrome.runtime.getURL !== undefined) {
@@ -317,7 +309,7 @@ function isImg(path) {
   return /\w.(png|jpg|jpeg|svg|webp|gif|bmp)$/i.test(path);
 }
 
-function documentListenerDebounce(fun, time) {
+function debounceFunc(fun, time) {
   let timeout = null; // debounce
   $(document).mousemove((e) => {
     if (timeout) {
@@ -329,73 +321,81 @@ function documentListenerDebounce(fun, time) {
   });
 }
 
-/* collect relative */
-async function pushCollect(title, data, type, timeStamp) {
-  loadStorage("COLLECT").then((collect) => {
-    collect.push({
-      title: title,
-      content: data,
-      type: type,
-      timeStamp: timeStamp,
-      collectTime: new Date(timeStamp).format("YYYY-MM-DD HH:mm"),
+/* Date prototype Expand */
+Date.prototype.format = function (fmt) {
+  let ret;
+  const opt = {
+    "Y+": this.getFullYear().toString(),
+    "M+": (this.getMonth() + 1).toString(),
+    "D+": this.getDate().toString(),
+    "H+": this.getHours().toString(),
+    "m+": this.getMinutes().toString(),
+    "S+": this.getSeconds().toString(),
+  };
+  for (let k in opt) {
+    ret = new RegExp("(" + k + ")").exec(fmt);
+    if (ret) {
+      fmt = fmt.replace(
+        ret[1],
+        ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, "0")
+      );
+    }
+  }
+  return fmt;
+};
+
+/* Interactions */
+let Interactions = {
+  facingToMouse: function (actor) {
+    debounceFunc((e) => {
+      actor.updateDirection(e.clientX);
+    }, 15);
+  },
+  followClick: function (actor) {
+    $(document).mousedown((e) => {
+      $(".bait-asoul").remove(); // only one candy appear
+      Object.keys(TABLE).forEach((key) => {
+        if (actor.actor === key) {
+          let bait = new Bait({
+            x: e.clientX,
+            y: e.clientY,
+            type: TABLE[key].bait,
+          });
+          actor.chase(bait);
+        }
+      });
     });
-    updateStorage("COLLECT", collect);
-  });
-}
-
-/* effect relative */
-function followClick(actor) {
-  $(document).mousedown((e) => {
-    $(".bait-asoul").remove(); // only one candy appear
-    Object.keys(TABLE).forEach((key) => {
-      if (actor.actor === key) {
-        let bait = new Bait({
-          x: e.clientX,
-          y: e.clientY,
-          type: TABLE[key].bait,
-        });
-        actor.chase(bait);
-      }
+  },
+  followDBClick: function (actor) {
+    $(document).dblclick((e) => {
+      $(".bait-asoul").remove(); // only one candy appear
+      Object.keys(TABLE).forEach((key) => {
+        if (actor.actor === key) {
+          let bait = new Bait({
+            x: e.clientX,
+            y: e.clientY,
+            type: TABLE[key].bait,
+          });
+          actor.chase(bait);
+        }
+      });
     });
-  });
-}
+  },
+  followMouse: function (actor) {
+    debounceFunc((e) => {
+      actor.chase({
+        x: e.clientX,
+        y: e.clientY,
+        hadEaten: false,
+        eaten: () => {
+          return;
+        },
+      });
+    }, 15);
+  },
+};
 
-function followDBClick(actor) {
-  $(document).dblclick((e) => {
-    $(".bait-asoul").remove(); // only one candy appear
-    Object.keys(TABLE).forEach((key) => {
-      if (actor.actor === key) {
-        let bait = new Bait({
-          x: e.clientX,
-          y: e.clientY,
-          type: TABLE[key].bait,
-        });
-        actor.chase(bait);
-      }
-    });
-  });
-}
-
-function followMouse(actor) {
-  documentListenerDebounce((e) => {
-    actor.chase({
-      x: e.clientX,
-      y: e.clientY,
-      hadEaten: false,
-      eaten: () => {
-        return;
-      },
-    });
-  }, 15);
-}
-
-function towardFollowMouse(actor) {
-  documentListenerDebounce((e) => {
-    actor.updateDirection(e.clientX);
-  }, 15);
-}
-
-/* drag & collect */
+/* Drag & Collect */
 function addDragListener() {
   document.addEventListener(
     "dragstart",
@@ -420,14 +420,14 @@ function addDragListener() {
   );
 }
 
-/* main */
+/* Main */
 async function main() {
   await loadStorage("CONFIG").then((config) => {
-    let position = 0;
+    let position = 0; // default position index = 0
     NAMETABLE.forEach((actorName) => {
       let actorConfig = config.actors[actorName];
       if (actorConfig.enabled) {
-        // enabled
+        // actor enabled, generate
         let actor = new ASoul({
           x: POSITIONS[position].x,
           y: POSITIONS[position].y,
@@ -435,21 +435,21 @@ async function main() {
           actor: actorName,
         });
         position += 1;
-        if (actorConfig.options.followClick) {
-          followClick(actor);
-        }
-        if (actorConfig.options.followDBClick) {
-          followDBClick(actor);
-        }
-        if (actorConfig.options.followMouse) {
-          followMouse(actor);
+        // add interaction
+        for (let key of Object.keys(actorConfig.options)) {
+          if (key === "dontFollow") break;
+          if (actorConfig.options[key]) {
+            Interactions[key](actor);
+          }
         }
         if (config.collectEnabled) {
+          // accept drop event
           actor.addDropEventListener();
         }
       }
     });
     if (config.collectEnabled) {
+      // enable drag event
       addDragListener();
     }
   });
