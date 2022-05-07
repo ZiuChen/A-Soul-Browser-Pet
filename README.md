@@ -87,4 +87,6 @@ src
 
 ## 🔗 相关链接
 
-[Github主页 ](https://github.com/ZiuChen) [CSDN博客](https://blog.csdn.net/Huuc6)  [掘金主页](https://juejin.cn/user/4420463502826087)
+Github：[@ZiuChen](https://github.com/ZiuChen)
+
+Outlook邮箱：ZiuChen@outlook.com

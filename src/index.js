@@ -197,7 +197,7 @@ class ASoul {
     }
     $(this.selector).attr(
       "src",
-      getImgURL(`./static/img/${this.actor}/${status}.gif`)
+      getImgURL(`./static/img/${this.actor}/${status}.png`)
     );
   }
   async sendMessage(content, permanently) {
