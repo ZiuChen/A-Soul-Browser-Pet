@@ -105,7 +105,7 @@ class ASoul {
   addClickEventListener() {
     // click on actor trigger events
     $(this.selector)
-      .mousedown((e) => {
+      .mouseup((e) => {
         this.updateStatus("interact_1")
       })
       .mouseup((e) => {
@@ -353,7 +353,7 @@ let Interactions = {
     }, 85)
   },
   followClick: function (actor) {
-    $(document).mousedown((e) => {
+    $(document).mouseup((e) => {
       $(".bait-asoul").remove() // only one candy appear
       Object.keys(TABLE).forEach((key) => {
         if (actor.actor === key) {
