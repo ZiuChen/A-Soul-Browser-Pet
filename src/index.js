@@ -77,10 +77,10 @@ class ASoul {
     Interactions.facingToMouse(this)
   }
   chase(bait) {
+    anime.remove(this.selector) // only chase the lastest candy
     this.removeMessage(this.actor)
     this.updateDirection(bait.x)
     this.updateStatus("chasing")
-    anime.remove(this.selector) // only chase the lastest candy
     anime({
       targets: this.selector,
       left: bait.x - 50,
@@ -200,7 +200,7 @@ class ASoul {
       getImgURL(`./static/img/${this.actor}/${status}.png`)
     )
   }
-  async sendMessage(content, permanently) {
+  async sendMessage(content) {
     this.removeMessage(this.actor) // remove other message-boxs when generate
     await this.getRandMessage(this.actor).then((message) => {
       if (content !== undefined) {
@@ -216,11 +216,9 @@ class ASoul {
         })
         .append(`<p>${message}</p>`)
       $("body").append(div)
-      if (!permanently) {
-        setTimeout(() => {
-          this.removeMessage(this.actor) // auto remove after append
-        }, 1000)
-      }
+      setTimeout(() => {
+        this.removeMessage(this.actor) // auto remove after append
+      }, 1000)
     })
   }
   async removeMessage(actorName) {
@@ -232,6 +230,9 @@ class ASoul {
       .then((json) => {
         let rand = randInt(0, json[actorName].length - 1) // choose one message return
         return json[actorName][rand]
+      })
+      .catch((err) => {
+        console.log(err)
       })
   }
 }
