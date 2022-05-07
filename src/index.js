@@ -105,7 +105,7 @@ class ASoul {
   addClickEventListener() {
     // click on actor trigger events
     $(this.selector)
-      .mouseup((e) => {
+      .mousedown((e) => {
         this.updateStatus("interact_1")
       })
       .mouseup((e) => {
