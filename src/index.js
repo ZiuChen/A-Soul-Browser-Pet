@@ -79,6 +79,7 @@ class ASoul {
   chase(bait) {
     this.removeMessage(this.actor)
     this.updateDirection(bait.x)
+    this.updateStatus("chasing")
     anime.remove(this.selector) // only chase the lastest candy
     anime({
       targets: this.selector,
@@ -88,7 +89,6 @@ class ASoul {
       easing: "linear",
       update: () => {
         // call frequently when chasing
-        this.updateStatus("chasing")
         this.x = this.getPosition(this.selector).x
         this.y = this.getPosition(this.selector).y
       },
@@ -279,7 +279,7 @@ class Bait {
 /* Chrome API Applied */
 function getImgURL(src) {
   // transfer common url to extension link
-  if (chrome.runtime.getURL !== undefined) {
+  if (chrome?.runtime?.getURL) {
     return chrome.runtime.getURL(src)
   } else {
     return src
@@ -349,7 +349,7 @@ let Interactions = {
   facingToMouse: function (actor) {
     debounceFunc((e) => {
       actor.updateDirection(e.clientX)
-    }, 15)
+    }, 85)
   },
   followClick: function (actor) {
     $(document).mousedown((e) => {
@@ -391,7 +391,7 @@ let Interactions = {
           return
         },
       })
-    }, 15)
+    }, 75)
   },
 }
 
