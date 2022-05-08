@@ -111,9 +111,7 @@ class ASoul {
       .mouseup((e) => {
         this.updatePosition(this.getPosition(this.selector))
         this.sendMessage()
-        setTimeout(() => {
-          this.updateStatus("rand")
-        }, 500)
+        this.updateStatus("rand")
       })
       // drag & drop event
       .on("dragover", (ev) => {
@@ -201,15 +199,16 @@ class ASoul {
     )
   }
   async sendMessage(content) {
-    this.removeMessage(this.actor) // remove other message-boxs when generate
     await this.getRandMessage(this.actor).then((message) => {
       if (content !== undefined) {
         message = content
       }
       let div = document.createElement("div")
+      let timeStamp = new Date().getTime()
       $(div)
         .addClass("message-box-asoul")
         .addClass(this.actor)
+        .addClass(timeStamp.toString())
         .css({
           left: this.x + 100,
           top: this.y + 50,
@@ -217,15 +216,19 @@ class ASoul {
         .append(`<p>${message}</p>`)
       $("body").append(div)
       setTimeout(() => {
-        this.removeMessage(this.actor) // auto remove after append
+        this.removeMessage(this.actor, timeStamp) // auto remove after append
       }, 1000)
     })
   }
-  async removeMessage(actorName) {
-    $(".message-box-asoul." + actorName).remove()
+  async removeMessage(actorName, timeStamp) {
+    if (timeStamp === undefined) {
+      $(`.message-box-asoul.${actorName}`).remove()
+    } else {
+      $(`.message-box-asoul.${actorName}.${timeStamp}`).remove()
+    }
   }
   async getRandMessage(actorName) {
-    return await fetch(chrome.runtime.getURL("./static/message.json"))
+    return await fetch(chrome.runtime.getURL("static/message.json"))
       .then((RES) => RES.json())
       .then((json) => {
         let rand = randInt(0, json[actorName].length - 1) // choose one message return
