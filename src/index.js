@@ -353,7 +353,7 @@ let Interactions = {
     }, 85)
   },
   followClick: function (actor) {
-    $(document).mouseup((e) => {
+    $(document).mousedown((e) => {
       $(".bait-asoul").remove() // only one candy appear
       Object.keys(TABLE).forEach((key) => {
         if (actor.actor === key) {
