@@ -106,12 +106,15 @@ class ASoul {
     // click on actor trigger events
     $(this.selector)
       .mousedown((e) => {
+        this.removeMessage(this.actor)
         this.updateStatus("interact_1")
       })
       .mouseup((e) => {
         this.updatePosition(this.getPosition(this.selector))
         this.sendMessage()
-        this.updateStatus("rand")
+        setTimeout(() => {
+          this.updateStatus("rand")
+        }, 500)
       })
       // drag & drop event
       .on("dragover", (ev) => {
