@@ -1,20 +1,21 @@
 {
   "name": "A-Soul 浏览器宠物",
-  "version": "0.3",
+  "version": "1.0.0",
   "description": "在浏览器里养一只A-Soul成员当宠物。",
-  "manifest_version": 3,
+  "manifest_version": 2,
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"],
+    "persistent": false
   },
   "permissions": ["storage"],
-  "action": {
-    "default_popup": "popup.html",
+  "browser_action": {
     "default_icon": {
       "16": "static/icon/icon_16.png",
       "32": "static/icon/icon_32.png",
       "48": "static/icon/icon_48.png",
       "128": "static/icon/icon_128.png"
-    }
+    },
+    "default_popup": "popup.html"
   },
   "content_scripts": [
     {
@@ -29,12 +30,7 @@
       "run_at": "document_idle"
     }
   ],
-  "web_accessible_resources": [
-    {
-      "resources": ["/static/*"],
-      "matches": ["<all_urls>"]
-    }
-  ],
+  "web_accessible_resources": ["/static/*"],
   "icons": {
     "16": "static/icon/icon_16.png",
     "32": "static/icon/icon_32.png",

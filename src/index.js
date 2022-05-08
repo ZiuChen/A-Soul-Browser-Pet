@@ -295,8 +295,10 @@ function getImgURL(src) {
 
 async function loadStorage(key) {
   // same to popup.js > loadStorage
-  return await chrome.storage.sync.get(key).then((data) => {
-    return JSON.parse(data[key])
+  return new Promise((resolve, reject) => {
+    return chrome.storage.sync.get(key, (data) => {
+      return resolve(JSON.parse(data[key]))
+    })
   })
 }
 
