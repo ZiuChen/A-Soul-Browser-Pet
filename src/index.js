@@ -257,7 +257,7 @@ class Bait {
   generateBait(x, y) {
     // TODO: Add animation to candy generation
     let img = document.createElement("img")
-    img.src = getImgURL(`./static/img/${this.type}.gif`)
+    img.src = getImgURL(`./static/img/${this.type}.png`)
     img.draggable = false // prevent native draggable event
     img.id = this.id
     loadStorage("CONFIG").then((config) => {
