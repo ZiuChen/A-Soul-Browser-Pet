@@ -55,7 +55,7 @@ const DEFAULTCONFIG = {
       },
     },
   },
-};
+}
 const DEFAULTCOLLECT = [
   {
     title: "文本",
@@ -64,30 +64,31 @@ const DEFAULTCOLLECT = [
     timeStamp: 1650340800000,
     collectTime: "2022-04-19 12:00",
   },
-];
+]
 
 /* storage initialization */
-chrome.storage.sync.get("CONFIG").then((data) => {
+
+chrome.storage.sync.get("CONFIG", (data) => {
   if (data["CONFIG"] === undefined) {
     chrome.storage.sync.set({ CONFIG: JSON.stringify(DEFAULTCONFIG) }, () => {
-      console.log("[background.js] CONFIG INIT!");
-    });
+      console.log("[background.js] CONFIG INIT!")
+    })
   } else {
-    console.log("[background.js] CONFIG LOADED!");
+    console.log("[background.js] CONFIG LOADED!")
   }
-});
-chrome.storage.sync.get("COLLECT").then((data) => {
+})
+chrome.storage.sync.get("COLLECT", (data) => {
   if (data["COLLECT"] === undefined) {
     chrome.storage.sync.set({ COLLECT: JSON.stringify(DEFAULTCOLLECT) }, () => {
-      console.log("[background.js] COLLECT INIT!");
-    });
+      console.log("[background.js] COLLECT INIT!")
+    })
   } else {
-    console.log("[background.js] COLLECT LOADED!");
+    console.log("[background.js] COLLECT LOADED!")
   }
-});
+})
 chrome.storage.onChanged.addListener(function (changes, namespace) {
   chrome.storage.sync.get("CONFIG", (data) => {
     // current storage
-  });
-  console.log("[background.js] storage changed");
-});
+  })
+  console.log("[background.js] storage changed")
+})
