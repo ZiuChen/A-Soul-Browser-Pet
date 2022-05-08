@@ -18,267 +18,152 @@
       </div>
     </div>
     <div id="tab1-collect">
-      <div class="mdui-container collects">
-        <ul class="mdui-list mdui-list-dense">
-          <!-- inject dynamically by popup.js -->
+      <div id="collect-bar" class="mdui-container collects">
+        <div v-if="collectList.length === 0" class="empty-status">
+          <p>暂时没有收藏内容哦~</p>
+        </div>
+        <ul v-else class="mdui-list mdui-list-dense">
+          <li
+            v-for="collect of collectList"
+            :id="collect.timeStamp"
+            :title="collect.content"
+            class="mdui-list-item mdui-ripple"
+          >
+            <div
+              @click="handleCollectClick(collect)"
+              class="mdui-list-item-content"
+            >
+              <div
+                class="mdui-list-item-title mdui-list-item-one-line collect-title"
+              >
+                {{collect.title}}
+              </div>
+              <div class="mdui-list-item-text mdui-list-item-two-line">
+                <span class="mdui-text-color-theme-text collect-time"
+                  >{{collect.collectTime}}</span
+                >
+                <span> | </span>
+                <span class="mdui-text-color-theme-text collect-content"
+                  >{{collect.content}}</span
+                >
+              </div>
+            </div>
+            <svg
+              @click="handleCollectRemove(collect)"
+              mdui-tooltip="{content: '删除', position: 'left', delay: 100}"
+              class="mdui-list-item-icon mdui-ripple collect-remove-icon"
+              t="1650358949716"
+              viewBox="0 0 1024 1024"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="20746"
+              width="200"
+              height="200"
+            >
+              <path
+                d="M725.333333 128a85.333333 85.333333 0 0 1 85.333334 85.333333v682.666667l-298.666667-128-298.666667 128V213.333333a85.333333 85.333333 0 0 1 85.333334-85.333333h426.666666M348.586667 366.08L451.84 469.333333l-103.253333 102.826667 60.586666 60.586667L512 529.493333l102.826667 103.253334 60.586666-60.586667L572.16 469.333333l103.253333-103.253333-60.586666-60.16L512 408.746667 409.173333 305.92 348.586667 366.08z"
+                fill=""
+                p-id="20747"
+              ></path>
+            </svg>
+          </li>
         </ul>
       </div>
     </div>
     <div id="tab2-setting">
-      <div class="mdui-container actor-configs">
-        <div class="mdui-card ava">
-          <div class="mdui-card-media">
-            <img src="./static/img/ava/happy.png" alt="" />
-            <div
-              class="mdui-card-media-covered mdui-card-media-covered-gradient"
-            >
-              <div class="mdui-card-primary">
-                <div class="mdui-card-primary-title">向晚</div>
-                <div class="mdui-card-primary-subtitle">Ava</div>
-              </div>
-            </div>
-          </div>
-          <div class="mdui-card-actions">
-            <div class="total-switch-container">
-              <label class="mdui-switch">
-                <input type="checkbox" title="enabled" class="enabled" />
-                <i class="mdui-switch-icon"></i>
-              </label>
-            </div>
-            <div class="detail-custom-container">
-              <label class="mdui-radio">
-                <input type="radio" class="followMouse" name="ava" />
-                <i class="mdui-radio-icon"></i>
-                跟随鼠标
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followClick" name="ava" />
-                <i class="mdui-radio-icon"></i>
-                跟随单击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followDBClick" name="ava" />
-                <i class="mdui-radio-icon"></i>
-                跟随双击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="dontFollow" name="ava" />
-                <i class="mdui-radio-icon"></i>
-                不跟随
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="mdui-card bella">
-          <div class="mdui-card-media">
-            <img src="./static/img/bella/happy.png" alt="" />
-            <div
-              class="mdui-card-media-covered mdui-card-media-covered-gradient"
-            >
-              <div class="mdui-card-primary">
-                <div class="mdui-card-primary-title">贝拉</div>
-                <div class="mdui-card-primary-subtitle">Bella</div>
-              </div>
-            </div>
-          </div>
-          <div class="mdui-card-actions">
-            <div class="total-switch-container">
-              <label class="mdui-switch">
-                <input type="checkbox" title="enabled" class="enabled" />
-                <i class="mdui-switch-icon"></i>
-              </label>
-            </div>
-            <div class="detail-custom-container">
-              <label class="mdui-radio">
-                <input type="radio" class="followMouse" name="bella" />
-                <i class="mdui-radio-icon"></i>
-                跟随鼠标
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followClick" name="bella" />
-                <i class="mdui-radio-icon"></i>
-                跟随单击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followDBClick" name="bella" />
-                <i class="mdui-radio-icon"></i>
-                跟随双击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="dontFollow" name="bella" />
-                <i class="mdui-radio-icon"></i>
-                不跟随
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="mdui-card carol">
-          <div class="mdui-card-media">
-            <img src="./static/img/carol/happy.png" alt="" />
-            <div
-              class="mdui-card-media-covered mdui-card-media-covered-gradient"
-            >
-              <div class="mdui-card-primary">
-                <div class="mdui-card-primary-title">珈乐</div>
-                <div class="mdui-card-primary-subtitle">Carol</div>
-              </div>
-            </div>
-          </div>
-          <div class="mdui-card-actions">
-            <div class="total-switch-container">
-              <label class="mdui-switch">
-                <input type="checkbox" title="enabled" class="enabled" />
-                <i class="mdui-switch-icon"></i>
-              </label>
-            </div>
-            <div class="detail-custom-container">
-              <label class="mdui-radio">
-                <input type="radio" class="followMouse" name="carol" />
-                <i class="mdui-radio-icon"></i>
-                跟随鼠标
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followClick" name="carol" />
-                <i class="mdui-radio-icon"></i>
-                跟随单击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followDBClick" name="carol" />
-                <i class="mdui-radio-icon"></i>
-                跟随双击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="dontFollow" name="carol" />
-                <i class="mdui-radio-icon"></i>
-                不跟随
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="mdui-card diana">
-          <div class="mdui-card-media">
-            <img src="./static/img/diana/happy.png" alt="" />
-            <div
-              class="mdui-card-media-covered mdui-card-media-covered-gradient"
-            >
-              <div class="mdui-card-primary">
-                <div class="mdui-card-primary-title">嘉然</div>
-                <div class="mdui-card-primary-subtitle">Diana</div>
-              </div>
-            </div>
-          </div>
-          <div class="mdui-card-actions">
-            <div class="total-switch-container">
-              <label class="mdui-switch">
-                <input type="checkbox" title="enabled" class="enabled" />
-                <i class="mdui-switch-icon"></i>
-              </label>
-            </div>
-            <div class="detail-custom-container">
-              <label class="mdui-radio">
-                <input type="radio" class="followMouse" name="diana" />
-                <i class="mdui-radio-icon"></i>
-                跟随鼠标
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followClick" name="diana" />
-                <i class="mdui-radio-icon"></i>
-                跟随单击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followDBClick" name="diana" />
-                <i class="mdui-radio-icon"></i>
-                跟随双击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="dontFollow" name="diana" />
-                <i class="mdui-radio-icon"></i>
-                不跟随
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="mdui-card eileen">
-          <div class="mdui-card-media">
-            <img src="./static/img/eileen/happy.png" alt="" />
-            <div
-              class="mdui-card-media-covered mdui-card-media-covered-gradient"
-            >
-              <div class="mdui-card-primary">
-                <div class="mdui-card-primary-title">乃琳</div>
-                <div class="mdui-card-primary-subtitle">Eileen</div>
-              </div>
-            </div>
-          </div>
-          <div class="mdui-card-actions">
-            <div class="total-switch-container">
-              <label class="mdui-switch">
-                <input type="checkbox" title="enabled" class="enabled" />
-                <i class="mdui-switch-icon"></i>
-              </label>
-            </div>
-            <div class="detail-custom-container">
-              <label class="mdui-radio">
-                <input type="radio" class="followMouse" name="eileen" />
-                <i class="mdui-radio-icon"></i>
-                跟随鼠标
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followClick" name="eileen" />
-                <i class="mdui-radio-icon"></i>
-                跟随单击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="followDBClick" name="eileen" />
-                <i class="mdui-radio-icon"></i>
-                跟随双击
-              </label>
-              <label class="mdui-radio">
-                <input type="radio" class="dontFollow" name="eileen" />
-                <i class="mdui-radio-icon"></i>
-                不跟随
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="mdui-container common-configs">
-        <ul class="ul-style-wrapper">
-          <li class="mdui-list-item mdui-ripple">
-            <div class="mdui-list-item-content">诱饵</div>
-            <label class="mdui-switch">
-              <input
-                type="checkbox"
-                title="generateBait"
-                class="generateBait"
+      <div id="setting-bar">
+        <div class="mdui-container actor-configs">
+          <div v-for="actor of NAMETABLE" :class="'mdui-card ' + actor.id">
+            <div class="mdui-card-media">
+              <img
+                :title="actor.id"
+                :src="'./static/img/' + actor.id + '/happy.gif'"
+                :alt="actor.id"
               />
-              <i class="mdui-switch-icon"></i>
-            </label>
-          </li>
-          <li class="mdui-list-item mdui-ripple">
-            <div class="mdui-list-item-content">收藏</div>
-            <label class="mdui-switch">
-              <input
-                type="checkbox"
-                title="collectEnabled"
-                class="collectEnabled"
-              />
-              <i class="mdui-switch-icon"></i>
-            </label>
-          </li>
-          <li class="mdui-list-item mdui-ripple">
-            <div class="mdui-list-item-content">速度</div>
-            <input
-              class="mdui-textfield-input speed"
-              type="number"
-              placeholder="速度"
-            />
-          </li>
-        </ul>
+              <div
+                class="mdui-card-media-covered mdui-card-media-covered-gradient"
+              >
+                <div class="mdui-card-primary">
+                  <div class="mdui-card-primary-title">{{actor.name}}</div>
+                  <div class="mdui-card-primary-subtitle">{{actor.id}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="mdui-card-actions">
+              <div class="total-switch-container">
+                <label class="mdui-switch">
+                  <input
+                    type="checkbox"
+                    title="enabled"
+                    class="enabled"
+                    :name="actor.id.toLowerCase()"
+                    @change="handleEnabledChange"
+                    :checked="config.actors[actor.id.toLowerCase()]['enabled']"
+                  />
+                  <i class="mdui-switch-icon"></i>
+                </label>
+              </div>
+              <div
+                class="detail-custom-container"
+                v-show="config.actors[actor.id.toLowerCase()]['enabled']"
+              >
+                <label
+                  class="mdui-radio"
+                  v-for="option of Object.keys(config.actors[actor.id.toLowerCase()]['options'])"
+                >
+                  <input
+                    type="radio"
+                    :class="option"
+                    :name="actor.id.toLowerCase()"
+                    @click="handleOptionChange"
+                    :checked="config.actors[actor.id.toLowerCase()]['options'][option]"
+                  />
+                  <i class="mdui-radio-icon"></i>
+                  {{optionsFormatter(option)}}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mdui-container common-configs">
+          <ul class="ul-style-wrapper">
+            <li
+              v-for="configKey of COMMONCONFIGTABLE"
+              class="mdui-list-item mdui-ripple"
+            >
+              <template v-if="configKey.type === 'radio'">
+                <div class="mdui-list-item-content">{{configKey.name}}</div>
+                <label class="mdui-switch">
+                  <input
+                    type="checkbox"
+                    @change="handleCommonConfigChange"
+                    :title="configKey.id"
+                    :class="configKey.id"
+                    :checked="config[configKey.id]"
+                    :name="configKey.id"
+                  />
+                  <i class="mdui-switch-icon"></i>
+                </label>
+              </template>
+              <template v-if="configKey.type === 'text'">
+                <div class="mdui-list-item-content">{{configKey.name}}</div>
+                <input
+                  :class="'mdui-textfield-input' + ' ' + configKey.id"
+                  :name="configKey.id"
+                  :title="configKey.id"
+                  @change="handleCommonConfigChange"
+                  :value="config[configKey.id]"
+                  type="number"
+                  :placeholder="configKey.name"
+                />
+              </template>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
+    <script src="./lib/vue.global.prod.js"></script>
     <script src="./lib/mdui.min.js"></script>
-    <script src="./lib/jquery.min.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

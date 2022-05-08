@@ -1,6 +1,6 @@
 {
   "name": "A-Soul 浏览器宠物",
-  "version": "1.0.0",
+  "version": "0.0.4",
   "description": "在浏览器里养一只A-Soul成员当宠物。",
   "manifest_version": 2,
   "background": {
@@ -8,6 +8,7 @@
     "persistent": false
   },
   "permissions": ["storage"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "browser_action": {
     "default_icon": {
       "16": "static/icon/icon_16.png",

@@ -2,6 +2,7 @@
 body {
   width: 500px; /* max size of popup.html */
   height: 500px; /* max size of popup.html */
+  font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, sans-serif;
 }
 ::-webkit-scrollbar {
   /* hide scrollbar */
@@ -13,12 +14,22 @@ body {
   word-break: break-all;
 }
 
+.empty-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .collect-tip {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 90px;
   font-size: 1.2em;
+}
+
+.collect-time {
+  font-weight: bold;
 }
 
 /* config tab*/

@@ -198,7 +198,7 @@ class ASoul {
     }
     $(this.selector).attr(
       "src",
-      getImgURL(`./static/img/${this.actor}/${status}.png`)
+      getImgURL(`./static/img/${this.actor}/${status}.gif`)
     )
   }
   async sendMessage(content) {
@@ -257,7 +257,7 @@ class Bait {
   generateBait(x, y) {
     // TODO: Add animation to candy generation
     let img = document.createElement("img")
-    img.src = getImgURL(`./static/img/${this.type}.png`)
+    img.src = getImgURL(`./static/img/${this.type}.gif`)
     img.draggable = false // prevent native draggable event
     img.id = this.id
     loadStorage("CONFIG").then((config) => {
