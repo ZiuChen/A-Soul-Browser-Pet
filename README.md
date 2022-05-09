@@ -6,7 +6,7 @@
 <a href="https://gitee.com/ziuc/A-Soul-Browser-Pet"><img src="https://img.shields.io/static/v1?label=Gitee&message=%E9%95%9C%E5%83%8F&color=c71d23&style=flat-square&logo=gitee&logoColor=c71d23"></img></a>
 <img src="https://img.shields.io/static/v1?label=Vue.js&message=v3.2&color=4FC08D&style=flat-square&logo=vue.js&logoColor=ffffff"></img>
 <img src="https://img.shields.io/badge/%20License-MIT-yellow?style=flat-square&labelColor=black"></img>
-    <img src="https://cdn.jsdelivr.net/gh/ZiuChen/A-Soul-Browser-Pet@bili_version/docs/images/image0.png" width="80%" />
+    <img src="./docs/images/image0.png" width="80%" />
 </div>
 
 ## 🔰 安装方式
@@ -36,7 +36,7 @@ Chrome 浏览器：
 
 > 她能陪你一起读文献、刷视频、看直播，还能够与你互动，帮你收集语料，提醒你按时休息。
 
-<img src="https://cdn.jsdelivr.net/gh/ZiuChen/A-Soul-Browser-Pet@bili_version/docs/images/image1.png" width="80%" />
+<img src="./docs/images/image1.png" width="80%" />
 
 #### 互动方式：
 
@@ -54,7 +54,7 @@ Chrome 浏览器：
 
 除了小然，还有其他四位A-Soul成员可以配置，点击扩展按钮，在弹出框中进行配置。
 
-<img src="https://cdn.jsdelivr.net/gh/ZiuChen/A-Soul-Browser-Pet@bili_version/docs/images/image2.png" width="80%" />
+<img src="./docs/images/image2.png" width="80%" />
 
 * **诱饵**：每位成员都对应着不同的诱饵，会在点击鼠标后展示； *（可能会影响正常点击）*
 * **收藏**：开启后，可以使用拖拽收藏功能；
