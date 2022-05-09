@@ -8,6 +8,15 @@ body {
   /* hide scrollbar */
   display: none; /* Chrome Safari */
 }
+.description-box {
+  height: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.description-box a {
+  margin: 0px 10px 0px 10px;
+}
 
 /* collect tab */
 .collect-content {

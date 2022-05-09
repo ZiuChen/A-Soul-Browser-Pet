@@ -213,3 +213,15 @@ async function copyImage(url) {
     mdui.snackbar("出错了：" + err)
   }
 }
+
+/* Listener */
+document.querySelector(".description-box").addEventListener("click", e => {
+  switch (e.target.name) {
+    case "github":
+      window.open("https://github.com/ZiuChen/A-Soul-Browser-Pet")
+      return
+    case "gitee":
+      window.open("https://gitee.com/ziuc/A-Soul-Browser-Pet")
+      return
+  }
+})
