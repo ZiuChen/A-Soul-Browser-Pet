@@ -129,36 +129,21 @@ class ASoul {
       this.updateStatus("rand")
     })
     async function processDropEvent(ev) {
-      let content = ev.originalEvent.dataTransfer.getData("text/plain")
-      let title = "文本"
-      let type = "text"
+      let date = new Date()
+      let obj = { timeStamp: date.getTime(), collectTime: date.format("YYYY-MM-DD HH:mm") }
       try {
-        // Image or Link innerHTML
-        new URL(content)
-        let splits = content.split("#")
-        title = splits[splits.length - 1] // avoid situation of link default have #
-        content = content.split("#" + title)[0]
-        if (isImg(content)) {
-          type = "image"
-        } else {
-          type = "link"
-        }
-      } catch (err) {
-        // plain text
-        // do nothing
+        Object.assign(obj, JSON.parse(ev.originalEvent.dataTransfer.getData("text/plain")))
+      } catch (error) {
+        obj.title = "文本"
+        obj.content = ev.originalEvent.dataTransfer.getData("text/plain")
+        obj.type = "text"
       }
-      await pushCollect(title, content, type, new Date().getTime())
+      await pushCollect(obj)
     }
-    async function pushCollect(title, data, type, timeStamp) {
-      loadStorage("COLLECT").then((collect) => {
-        collect.push({
-          title: title,
-          content: data,
-          type: type,
-          timeStamp: timeStamp,
-          collectTime: new Date(timeStamp).format("YYYY-MM-DD HH:mm"),
-        })
-        updateStorage("COLLECT", collect)
+    async function pushCollect(collectObj) {
+      loadStorage("COLLECT").then((collects) => {
+        collects.push(collectObj)
+        updateStorage("COLLECT", collects)
       })
     }
   }
@@ -409,21 +394,25 @@ function addDragListener() {
   document.addEventListener(
     "dragstart",
     (ev) => {
+      // link | image: pass data by obj
+      // text: dont wrapped in obj, transfer directly
+      let obj = {}
       if (ev.target.href !== undefined) {
         // link
-        // pass title with #
-        let title = ev.target.innerText
-        if (title === "") {
-          title = "链接"
-        }
-        ev.dataTransfer.setData("text/plain", ev.target.href + "#" + title)
+        obj.title = ev.target.innerText === "" ? "链接" : ev.target.innerText
+        obj.content = ev.target.href
+        obj.type = "link"
       } else if (ev.target.src !== undefined) {
         // image link
-        ev.dataTransfer.setData("text/plain", ev.target.src + "#" + "图像")
+        obj.title = "图像"
+        obj.content = ev.target.src
+        obj.type = "image"
       } else {
         // plain text
-        ev.dataTransfer.setData("text/html", ev.target.data)
+        // nothing to do
+        return 
       }
+      ev.dataTransfer.setData("text/plain", JSON.stringify(obj))
     },
     false
   )
