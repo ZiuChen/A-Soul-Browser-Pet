@@ -2,6 +2,10 @@
 	<h1>A-Soul 浏览器宠物</h1>
     <em>A-Soul Browser Pet</em>
     <p>在浏览器里养一只A-Soul成员当宠物</p>
+    <a href="https://github.com/ZiuChen/A-Soul-Browser-Pet"><img src="https://img.shields.io/badge/Github-black?logo=github"></img></a>
+<a href="https://gitee.com/ziuc/A-Soul-Browser-Pet"><img src="https://img.shields.io/static/v1?label=Gitee&message=%E9%95%9C%E5%83%8F&color=c71d23&style=flat-square&logo=gitee&logoColor=c71d23"></img></a>
+<img src="https://img.shields.io/static/v1?label=Vue.js&message=v3.2&color=4FC08D&style=flat-square&logo=vue.js&logoColor=ffffff"></img>
+<img src="https://img.shields.io/badge/%20License-MIT-yellow?style=flat-square&labelColor=black"></img>
     <img src="./images/image0.png" width="80%" />
 </div>
 
