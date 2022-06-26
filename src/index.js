@@ -4,51 +4,44 @@
  * Released under the MIT license
  */
 /* TABLES */
-const NAMETABLE = ["ava", "bella", "carol", "diana", "eileen"]
-const OPTIONSTABLE = [
-  "followMouse",
-  "followClick",
-  "followDBClick",
-  "dontFollow",
-]
 const TABLE = {
   ava: {
-    bait: "bowl",
+    bait: "bowl"
   },
   bella: {
-    bait: "star",
+    bait: "star"
   },
   carol: {
-    bait: "knight",
+    bait: "knight"
   },
   diana: {
-    bait: "candy",
+    bait: "candy"
   },
   eileen: {
-    bait: "icecream",
-  },
+    bait: "icecream"
+  }
 }
 const POSITIONS = [
   {
     x: 0,
-    y: $(window).height() - 100,
+    y: $(window).height() - 100
   },
   {
     x: 0,
-    y: 0,
+    y: 0
   },
   {
     x: $(window).width() - 100,
-    y: 0,
+    y: 0
   },
   {
     x: $(window).width() - 100,
-    y: $(window).height() - 100,
+    y: $(window).height() - 100
   },
   {
     x: ($(window).width() - 100) / 2,
-    y: $(window).height() - 100,
-  },
+    y: $(window).height() - 100
+  }
 ]
 
 /* Class Definition */
@@ -99,7 +92,7 @@ class ASoul {
         } else {
           this.updateStatus("unhappy")
         }
-      },
+      }
     })
   }
   addClickEventListener() {
@@ -129,8 +122,11 @@ class ASoul {
       this.updateStatus("rand")
     })
     async function processDropEvent(ev) {
-      let date = new Date()
-      let obj = { timeStamp: date.getTime(), collectTime: date.format("YYYY-MM-DD HH:mm") }
+      const date = new Date()
+      const obj = {
+        timeStamp: date.getTime(),
+        collectTime: date.format("YYYY-MM-DD HH:mm")
+      }
       try {
         Object.assign(obj, JSON.parse(ev.originalEvent.dataTransfer.getData("text/plain")))
       } catch (error) {
@@ -148,29 +144,21 @@ class ASoul {
     }
   }
   getDistanceToBait(x, y) {
-    let distance = Math.sqrt(
+    const distance = Math.sqrt(
       Math.pow(x - this.x - 100, 2) + Math.pow(y - this.y - 125, 2) // Adaptive vaule adjustment
     )
     return distance
   }
   updateDirection(x) {
-    if (x - 100 >= this.x) {
-      // turn right
-      anime({
-        targets: this.selector,
-        rotateY: "180deg",
-      })
-    } else {
-      anime({
-        targets: this.selector,
-        rotateY: "360deg",
-      })
-    }
+    anime({
+      targets: this.selector,
+      rotateY: x - 100 >= this.x ? "180deg" : "360deg"
+    })
   }
   getPosition(selector) {
     return {
       x: parseInt($(selector).css("left").split("px")[0] - 50),
-      y: parseInt($(selector).css("top").split("px")[0] - 50),
+      y: parseInt($(selector).css("top").split("px")[0] - 50)
     }
   }
   updatePosition({ x, y }) {
@@ -181,10 +169,7 @@ class ASoul {
     if (status === "rand") {
       status = "interact_" + randInt(2, 9).toString()
     }
-    $(this.selector).attr(
-      "src",
-      getImgURL(`./static/img/${this.actor}/${status}.png`)
-    )
+    $(this.selector).attr("src", getImgURL(`./static/img/${this.actor}/${status}.png`))
   }
   async sendMessage(content) {
     await this.getRandMessage(this.actor).then((message) => {
@@ -199,7 +184,7 @@ class ASoul {
         .addClass(timeStamp.toString())
         .css({
           left: this.x + 100,
-          top: this.y + 50,
+          top: this.y + 50
         })
         .append(`<p>${message}</p>`)
       $("body").append(div)
@@ -324,15 +309,12 @@ Date.prototype.format = function (fmt) {
     "D+": this.getDate().toString(),
     "H+": this.getHours().toString(),
     "m+": this.getMinutes().toString(),
-    "S+": this.getSeconds().toString(),
+    "S+": this.getSeconds().toString()
   }
   for (let k in opt) {
     ret = new RegExp("(" + k + ")").exec(fmt)
     if (ret) {
-      fmt = fmt.replace(
-        ret[1],
-        ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, "0")
-      )
+      fmt = fmt.replace(ret[1], ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, "0"))
     }
   }
   return fmt
@@ -353,7 +335,7 @@ let Interactions = {
           let bait = new Bait({
             x: e.clientX,
             y: e.clientY,
-            type: TABLE[key].bait,
+            type: TABLE[key].bait
           })
           actor.chase(bait)
         }
@@ -368,7 +350,7 @@ let Interactions = {
           let bait = new Bait({
             x: e.clientX,
             y: e.clientY,
-            type: TABLE[key].bait,
+            type: TABLE[key].bait
           })
           actor.chase(bait)
         }
@@ -383,10 +365,10 @@ let Interactions = {
         hadEaten: false,
         eaten: () => {
           return
-        },
+        }
       })
     }, 75)
-  },
+  }
 }
 
 /* Drag & Collect */
@@ -410,7 +392,7 @@ function addDragListener() {
       } else {
         // plain text
         // nothing to do
-        return 
+        return
       }
       ev.dataTransfer.setData("text/plain", JSON.stringify(obj))
     },
@@ -422,7 +404,7 @@ function addDragListener() {
 async function main() {
   await loadStorage("CONFIG").then((config) => {
     let position = 0 // default position index = 0
-    NAMETABLE.forEach((actorName) => {
+    Object.keys(TABLE).forEach((actorName) => {
       let actorConfig = config.actors[actorName]
       if (actorConfig.enabled) {
         // actor enabled, generate
@@ -430,7 +412,7 @@ async function main() {
           x: POSITIONS[position].x,
           y: POSITIONS[position].y,
           speed: config.speed,
-          actor: actorName,
+          actor: actorName
         })
         position += 1
         // add interaction
