@@ -2,7 +2,7 @@
 body {
   width: 500px; /* max size of popup.html */
   height: 500px; /* max size of popup.html */
-  font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Microsoft Yahei, sans-serif;
 }
 ::-webkit-scrollbar {
   /* hide scrollbar */

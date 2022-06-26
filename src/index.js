@@ -6,19 +6,19 @@
 /* TABLES */
 const TABLE = {
   ava: {
-    bait: "bowl"
+    bait: 'bowl'
   },
   bella: {
-    bait: "star"
+    bait: 'star'
   },
   carol: {
-    bait: "knight"
+    bait: 'knight'
   },
   diana: {
-    bait: "candy"
+    bait: 'candy'
   },
   eileen: {
-    bait: "icecream"
+    bait: 'icecream'
   }
 }
 const POSITIONS = [
@@ -47,7 +47,7 @@ const POSITIONS = [
 /* Class Definition */
 class ASoul {
   constructor({ x, y, speed, actor }) {
-    this.selector = ".actor-asoul." + actor
+    this.selector = '.actor-asoul.' + actor
     this.speed = speed // px per second
     this.actor = actor // diana | ava | bella | carol | eileen
     this.generateActor({ x: x, y: y })
@@ -56,16 +56,16 @@ class ASoul {
     this.y = this.getPosition(this.selector).y
   }
   generateActor({ x, y }) {
-    let img = document.createElement("img")
+    let img = document.createElement('img')
     img.alt = this.actor
     img.draggable = false // prevent native draggable event
     $(img)
-      .addClass("actor-asoul")
-      .addClass("draggable")
+      .addClass('actor-asoul')
+      .addClass('draggable')
       .addClass(this.actor)
       .css({ left: x, top: y })
-    $("body").append(img)
-    this.updateStatus("thinking")
+    $('body').append(img)
+    this.updateStatus('thinking')
     beejdnd.init() // draggable init
     Interactions.facingToMouse(this)
   }
@@ -73,13 +73,13 @@ class ASoul {
     anime.remove(this.selector) // only chase the lastest candy
     this.removeMessage(this.actor)
     this.updateDirection(bait.x)
-    this.updateStatus("chasing")
+    this.updateStatus('chasing')
     anime({
       targets: this.selector,
       left: bait.x - 50,
       top: bait.y - 75,
       duration: (this.getDistanceToBait(bait.x, bait.y) / this.speed) * 1000,
-      easing: "linear",
+      easing: 'linear',
       update: () => {
         // call frequently when chasing
         this.x = this.getPosition(this.selector).x
@@ -88,9 +88,9 @@ class ASoul {
       complete: () => {
         if (bait.hadEaten === false) {
           bait.eaten()
-          this.updateStatus("happy")
+          this.updateStatus('happy')
         } else {
-          this.updateStatus("unhappy")
+          this.updateStatus('unhappy')
         }
       }
     })
@@ -100,46 +100,49 @@ class ASoul {
     $(this.selector)
       .mousedown((e) => {
         this.removeMessage(this.actor)
-        this.updateStatus("interact_1")
+        this.updateStatus('interact_1')
       })
       .mouseup((e) => {
         this.updatePosition(this.getPosition(this.selector))
         this.sendMessage()
         setTimeout(() => {
-          this.updateStatus("rand")
+          this.updateStatus('rand')
         }, 500)
       })
       // drag & drop event
-      .on("dragover", (ev) => {
+      .on('dragover', (ev) => {
         // NECESSARY
         ev.originalEvent.preventDefault() // prevent default behavior
       })
   }
   addDropEventListener() {
-    $(this.selector).on("drop", (ev) => {
+    $(this.selector).on('drop', (ev) => {
       processDropEvent(ev)
-      this.sendMessage("收到！")
-      this.updateStatus("rand")
+      this.sendMessage('收到！')
+      this.updateStatus('rand')
     })
     async function processDropEvent(ev) {
       const date = new Date()
       const obj = {
         timeStamp: date.getTime(),
-        collectTime: date.format("YYYY-MM-DD HH:mm")
+        collectTime: date.format('YYYY-MM-DD HH:mm')
       }
       try {
-        Object.assign(obj, JSON.parse(ev.originalEvent.dataTransfer.getData("text/plain")))
+        Object.assign(
+          obj,
+          JSON.parse(ev.originalEvent.dataTransfer.getData('text/plain'))
+        )
       } catch (error) {
-        obj.title = "文本"
-        obj.content = ev.originalEvent.dataTransfer.getData("text/plain")
-        obj.type = "text"
+        obj.title = '文本'
+        obj.content = ev.originalEvent.dataTransfer.getData('text/plain')
+        obj.type = 'text'
       }
       await pushCollect(obj)
     }
     async function pushCollect(collectObj) {
-      loadStorage("COLLECT").then((collects) => {
+      loadStorage('COLLECT').then((collects) => {
         collects.push(collectObj)
-        updateStorage("COLLECT", collects)
+        updateStorage('COLLECT', collects)
       })
     }
   }
@@ -152,13 +155,13 @@ class ASoul {
   updateDirection(x) {
     anime({
       targets: this.selector,
-      rotateY: x - 100 >= this.x ? "180deg" : "360deg"
+      rotateY: x - 100 >= this.x ? '180deg' : '360deg'
     })
   }
   getPosition(selector) {
     return {
-      x: parseInt($(selector).css("left").split("px")[0] - 50),
-      y: parseInt($(selector).css("top").split("px")[0] - 50)
+      x: parseInt($(selector).css('left').split('px')[0] - 50),
+      y: parseInt($(selector).css('top').split('px')[0] - 50)
     }
   }
   updatePosition({ x, y }) {
@@ -166,20 +169,23 @@ class ASoul {
     this.y = y
   }
   updateStatus(status) {
-    if (status === "rand") {
-      status = "interact_" + randInt(2, 9).toString()
+    if (status === 'rand') {
+      status = 'interact_' + randInt(2, 9).toString()
     }
-    $(this.selector).attr("src", getImgURL(`./static/img/${this.actor}/${status}.png`))
+    $(this.selector).attr(
+      'src',
+      getImgURL(`./static/img/${this.actor}/${status}.png`)
+    )
   }
   async sendMessage(content) {
     await this.getRandMessage(this.actor).then((message) => {
       if (content !== undefined) {
         message = content
       }
-      let div = document.createElement("div")
+      let div = document.createElement('div')
       let timeStamp = new Date().getTime()
       $(div)
-        .addClass("message-box-asoul")
+        .addClass('message-box-asoul')
         .addClass(this.actor)
         .addClass(timeStamp.toString())
         .css({
@@ -187,7 +193,7 @@ class ASoul {
           top: this.y + 50
         })
         .append(`<p>${message}</p>`)
-      $("body").append(div)
+      $('body').append(div)
       setTimeout(() => {
         this.removeMessage(this.actor, timeStamp) // auto remove after append
       }, 1000)
@@ -201,7 +207,7 @@ class ASoul {
     }
   }
   async getRandMessage(actorName) {
-    return await fetch(chrome.runtime.getURL("static/message.json"))
+    return await fetch(chrome.runtime.getURL('static/message.json'))
       .then((RES) => RES.json())
       .then((json) => {
         let rand = randInt(0, json[actorName].length - 1) // choose one message return
@@ -216,7 +222,7 @@ class ASoul {
 class Bait {
   constructor({ x, y, type }) {
     this.id = new Date().getTime().toString()
-    this.selector = "#" + this.id
+    this.selector = '#' + this.id
     this.fadeTime = 5000
     this.x = x
     this.y = y
@@ -226,19 +232,19 @@ class Bait {
   }
   generateBait(x, y) {
     // TODO: Add animation to candy generation
-    let img = document.createElement("img")
+    let img = document.createElement('img')
     img.src = getImgURL(`./static/img/${this.type}.png`)
     img.draggable = false // prevent native draggable event
     img.id = this.id
-    loadStorage("CONFIG").then((config) => {
+    loadStorage('CONFIG').then((config) => {
       if (config.generateBait) {
-        $(img).css({ display: "" })
+        $(img).css({ display: '' })
       }
     })
     $(img)
-      .addClass("bait-asoul")
-      .css({ left: x - 75, top: y - 75, display: "none" })
-    $("body").append(img)
+      .addClass('bait-asoul')
+      .css({ left: x - 75, top: y - 75, display: 'none' })
+    $('body').append(img)
     this.addFadeListener()
   }
   addFadeListener() {
@@ -304,17 +310,20 @@ function debounceFunc(fun, time) {
 Date.prototype.format = function (fmt) {
   let ret
   const opt = {
-    "Y+": this.getFullYear().toString(),
-    "M+": (this.getMonth() + 1).toString(),
-    "D+": this.getDate().toString(),
-    "H+": this.getHours().toString(),
-    "m+": this.getMinutes().toString(),
-    "S+": this.getSeconds().toString()
+    'Y+': this.getFullYear().toString(),
+    'M+': (this.getMonth() + 1).toString(),
+    'D+': this.getDate().toString(),
+    'H+': this.getHours().toString(),
+    'm+': this.getMinutes().toString(),
+    'S+': this.getSeconds().toString()
   }
   for (let k in opt) {
-    ret = new RegExp("(" + k + ")").exec(fmt)
+    ret = new RegExp('(' + k + ')').exec(fmt)
     if (ret) {
-      fmt = fmt.replace(ret[1], ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, "0"))
+      fmt = fmt.replace(
+        ret[1],
+        ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, '0')
+      )
     }
   }
   return fmt
@@ -329,7 +338,7 @@ let Interactions = {
   },
   followClick: function (actor) {
     $(document).mousedown((e) => {
-      $(".bait-asoul").remove() // only one candy appear
+      $('.bait-asoul').remove() // only one candy appear
       Object.keys(TABLE).forEach((key) => {
         if (actor.actor === key) {
           let bait = new Bait({
@@ -344,7 +353,7 @@ let Interactions = {
   },
   followDBClick: function (actor) {
     $(document).dblclick((e) => {
-      $(".bait-asoul").remove() // only one candy appear
+      $('.bait-asoul').remove() // only one candy appear
       Object.keys(TABLE).forEach((key) => {
         if (actor.actor === key) {
           let bait = new Bait({
@@ -374,27 +383,27 @@ let Interactions = {
 /* Drag & Collect */
 function addDragListener() {
   document.addEventListener(
-    "dragstart",
+    'dragstart',
     (ev) => {
       // link | image: pass data by obj
       // text: dont wrapped in obj, transfer directly
       let obj = {}
       if (ev.target.href !== undefined) {
         // link
-        obj.title = ev.target.innerText === "" ? "链接" : ev.target.innerText
+        obj.title = ev.target.innerText === '' ? '链接' : ev.target.innerText
         obj.content = ev.target.href
-        obj.type = "link"
+        obj.type = 'link'
       } else if (ev.target.src !== undefined) {
         // image link
-        obj.title = "图像"
+        obj.title = '图像'
         obj.content = ev.target.src
-        obj.type = "image"
+        obj.type = 'image'
       } else {
         // plain text
         // nothing to do
         return
       }
-      ev.dataTransfer.setData("text/plain", JSON.stringify(obj))
+      ev.dataTransfer.setData('text/plain', JSON.stringify(obj))
     },
     false
   )
@@ -402,7 +411,7 @@ function addDragListener() {
 
 /* Main */
 async function main() {
-  await loadStorage("CONFIG").then((config) => {
+  await loadStorage('CONFIG').then((config) => {
     let position = 0 // default position index = 0
     Object.keys(TABLE).forEach((actorName) => {
       let actorConfig = config.actors[actorName]
@@ -417,7 +426,7 @@ async function main() {
         position += 1
         // add interaction
         for (let key of Object.keys(actorConfig.options)) {
-          if (key === "dontFollow") break
+          if (key === 'dontFollow') break
           if (actorConfig.options[key]) {
             Interactions[key](actor)
           }
