@@ -56,13 +56,11 @@ class ASoul {
     this.y = this.getPosition(this.selector).y
   }
   generateActor({ x, y }) {
-    let img = document.createElement('img')
+    const img = document.createElement('img')
     img.alt = this.actor
     img.draggable = false // prevent native draggable event
     $(img)
-      .addClass('actor-asoul')
-      .addClass('draggable')
-      .addClass(this.actor)
+      .addClass(`actor-asoul draggable ${this.actor}`)
       .css({ left: x, top: y })
     $('body').append(img)
     this.updateStatus('thinking')
@@ -82,8 +80,7 @@ class ASoul {
       easing: 'linear',
       update: () => {
         // call frequently when chasing
-        this.x = this.getPosition(this.selector).x
-        this.y = this.getPosition(this.selector).y
+        this.updatePosition(this.getPosition(this.selector))
       },
       complete: () => {
         if (bait.hadEaten === false) {
@@ -152,17 +149,17 @@ class ASoul {
     )
     return distance
   }
-  updateDirection(x) {
-    anime({
-      targets: this.selector,
-      rotateY: x - 100 >= this.x ? '180deg' : '360deg'
-    })
-  }
   getPosition(selector) {
     return {
       x: parseInt($(selector).css('left').split('px')[0] - 50),
       y: parseInt($(selector).css('top').split('px')[0] - 50)
     }
+  }
+  updateDirection(x) {
+    anime({
+      targets: this.selector,
+      rotateY: x - 100 >= this.x ? '180deg' : '360deg'
+    })
   }
   updatePosition({ x, y }) {
     this.x = x
@@ -182,12 +179,10 @@ class ASoul {
       if (content !== undefined) {
         message = content
       }
-      let div = document.createElement('div')
-      let timeStamp = new Date().getTime()
+      const div = document.createElement('div')
+      const timeStamp = new Date().getTime()
       $(div)
-        .addClass('message-box-asoul')
-        .addClass(this.actor)
-        .addClass(timeStamp.toString())
+        .addClass(`message-box-asoul ${this.actor} ${timeStamp}`)
         .css({
           left: this.x + 100,
           top: this.y + 50
@@ -207,10 +202,10 @@ class ASoul {
     }
   }
   async getRandMessage(actorName) {
-    return await fetch(chrome.runtime.getURL('static/message.json'))
-      .then((RES) => RES.json())
+    return fetch(chrome.runtime.getURL('static/message.json'))
+      .then((res) => res.json())
       .then((json) => {
-        let rand = randInt(0, json[actorName].length - 1) // choose one message return
+        const rand = randInt(0, json[actorName].length - 1) // choose one message return
         return json[actorName][rand]
       })
       .catch((err) => {
@@ -232,7 +227,7 @@ class Bait {
   }
   generateBait(x, y) {
     // TODO: Add animation to candy generation
-    let img = document.createElement('img')
+    const img = document.createElement('img')
     img.src = getImgURL(`./static/img/${this.type}.png`)
     img.draggable = false // prevent native draggable event
     img.id = this.id
@@ -280,7 +275,7 @@ async function loadStorage(key) {
 
 async function updateStorage(key, value) {
   // same to popup.js > updateStorage
-  let option = {}
+  const option = {}
   option[key] = JSON.stringify(value)
   return await chrome.storage.sync.set(option)
 }
@@ -317,7 +312,7 @@ Date.prototype.format = function (fmt) {
     'm+': this.getMinutes().toString(),
     'S+': this.getSeconds().toString()
   }
-  for (let k in opt) {
+  for (const k in opt) {
     ret = new RegExp('(' + k + ')').exec(fmt)
     if (ret) {
       fmt = fmt.replace(
@@ -330,7 +325,7 @@ Date.prototype.format = function (fmt) {
 }
 
 /* Interactions */
-let Interactions = {
+const Interactions = {
   facingToMouse: function (actor) {
     debounceFunc((e) => {
       actor.updateDirection(e.clientX)
@@ -341,7 +336,7 @@ let Interactions = {
       $('.bait-asoul').remove() // only one candy appear
       Object.keys(TABLE).forEach((key) => {
         if (actor.actor === key) {
-          let bait = new Bait({
+          const bait = new Bait({
             x: e.clientX,
             y: e.clientY,
             type: TABLE[key].bait
@@ -356,7 +351,7 @@ let Interactions = {
       $('.bait-asoul').remove() // only one candy appear
       Object.keys(TABLE).forEach((key) => {
         if (actor.actor === key) {
-          let bait = new Bait({
+          const bait = new Bait({
             x: e.clientX,
             y: e.clientY,
             type: TABLE[key].bait
@@ -387,7 +382,7 @@ function addDragListener() {
     (ev) => {
       // link | image: pass data by obj
       // text: dont wrapped in obj, transfer directly
-      let obj = {}
+      const obj = {}
       if (ev.target.href !== undefined) {
         // link
         obj.title = ev.target.innerText === '' ? '链接' : ev.target.innerText
@@ -414,10 +409,10 @@ async function main() {
   await loadStorage('CONFIG').then((config) => {
     let position = 0 // default position index = 0
     Object.keys(TABLE).forEach((actorName) => {
-      let actorConfig = config.actors[actorName]
+      const actorConfig = config.actors[actorName]
       if (actorConfig.enabled) {
         // actor enabled, generate
-        let actor = new ASoul({
+        const actor = new ASoul({
           x: POSITIONS[position].x,
           y: POSITIONS[position].y,
           speed: config.speed,
@@ -425,7 +420,7 @@ async function main() {
         })
         position += 1
         // add interaction
-        for (let key of Object.keys(actorConfig.options)) {
+        for (const key of Object.keys(actorConfig.options)) {
           if (key === 'dontFollow') break
           if (actorConfig.options[key]) {
             Interactions[key](actor)
