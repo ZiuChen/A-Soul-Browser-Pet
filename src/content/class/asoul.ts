@@ -10,6 +10,7 @@ export class ASoul {
   container: HTMLDivElement
   actor: HTMLImageElement
   towards: 'left' | 'right' = 'left'
+  isDragging = false
 
   constructor({ x, y, name }: ASoulOptions) {
     this.position = { x, y }
@@ -17,6 +18,8 @@ export class ASoul {
     this.container = createActor({ x, y, name })
     this.actor = this.container.querySelector('img')!
     this.addClickHandler()
+    this.addDragHandler()
+    this.addDropHandler()
     document.body.appendChild(this.container)
   }
 
@@ -46,6 +49,7 @@ export class ASoul {
       if (this.position.x === x && this.position.y === y) {
         cancel()
         this.setStatus('happy')
+        this.container.style.transition = ''
       }
     })
   }
@@ -57,6 +61,10 @@ export class ASoul {
       this.container.dataset.name as ActorName,
       status
     )
+  }
+
+  setRandomStatus() {
+    this.setStatus(`interact_${randNumber(1, 9)}` as ASoulStatus)
   }
 
   turnTo(target: 'left' | 'right') {
@@ -82,11 +90,79 @@ export class ASoul {
       )
 
       // random choose a interact status
-      const status = `interact_${randNumber(1, 9)}` as ASoulStatus
-      this.setStatus(status)
+      this.setRandomStatus()
 
       e.preventDefault()
       e.stopPropagation()
+    })
+  }
+
+  addDragHandler() {
+    let offsetX: number,
+      offsetY = 0
+
+    this.actor.addEventListener('mousedown', (e) => {
+      this.isDragging = true
+      this.setStatus('unhappy')
+      offsetX = e.offsetX
+      offsetY = e.offsetY
+    })
+
+    this.actor.addEventListener('mousemove', (e) => {
+      if (this.isDragging) {
+        const x = e.clientX - offsetX
+        const y = e.clientY - offsetY
+        this.container.style.left = `${x}px`
+        this.container.style.top = `${y}px`
+        this.position.x = x
+        this.position.y = y
+      }
+    })
+
+    this.actor.addEventListener('mouseup', (e) => {
+      if (this.isDragging) this.setStatus('happy')
+      this.isDragging = false
+      this.position.x = e.clientX - offsetX
+      this.position.y = e.clientY - offsetY
+    })
+  }
+
+  addDropHandler() {
+    this.actor.addEventListener('dragover', (e) => {
+      e.preventDefault()
+    })
+
+    this.actor.addEventListener('drop', (e: DragEvent) => {
+      console.log(e)
+      // const data = e.dataTransfer?.getData('text/plain')
+      // console.log(data)
+    })
+
+    document.addEventListener('dragstart', (e) => {
+      const target = e.target as HTMLElement | HTMLAnchorElement | HTMLImageElement
+      const data = {} as {
+        title: string
+        type: 'link' | 'image' | 'text'
+        content: string
+      }
+      // link | image | text
+      if (target?.href) {
+        // link
+        data.title = target.innerText || target.textContent || 'Link'
+        data.content = target.href
+        data.type = 'link'
+      } else if (target?.src) {
+        // image
+        data.title = target.alt || 'Image'
+        data.content = target.src
+        data.type = 'image'
+      } else {
+        // plain text
+        // able to get text at
+        data.title = 'Text'
+        data.content = target.textContent || target.innerText || ''
+        data.type = 'text'
+      }
     })
   }
 }

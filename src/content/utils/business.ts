@@ -18,6 +18,7 @@ export function createActor({ x, y, name, initialStatus = 'thinking' }: createAc
   img.style.width = '80px'
   img.style.height = '80px'
   img.alt = 'asoul'
+  img.draggable = false
   import(`../../assets/${name}/${initialStatus}.png`).then((res) => {
     img.src = res.default
   })
